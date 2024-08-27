@@ -26,14 +26,37 @@ pmsamplesize(
 
 \item{n_events}{A integer vector. The number of each events}
 
-\item{shrinkage}{Default is 0.9}
+\item{shrinkage}{A pre-defined shrinkage factor. Default to 0.9}
 
-\item{r2_cs}{A vector}
+\item{r2_cs}{A numeric vector. Pre-defined Cox-Snell \eqn{R^2}.}
+
+\item{r2_nagelkerke}{An adjustment for Cox-Snell \eqn{R^2}. Default to 0.15.}
+
+\item{simulation}{Either \code{glm} or \code{lrm}. See details.}
 
 \item{sim_params}{A list of pairwise C statistics and prevalences}
 
-\item{sigma}{}
+\item{sigma}{A single double. tolerate rate between adjusted \eqn{R^2} and apparent \eqn{R^2}}
+}
+\value{
+An integer
 }
 \description{
-Sample Criteria Extension for Multinomial Regression
+Calculate sample criteria basing on multinominal regression. The criteria are
+defined in Riley's work.
+}
+\details{
+Additional details...
+}
+\examples{
+K <- 5
+events <- c(2557, 186, 176, 467, 120)
+c_stats <- c(0.85, 0.92, 0.99, 0.95, 0.75, 0.95, 0.87, 0.87, 0.71, 0.82)
+prev <- phi_pairs(events)
+set.seed(101)
+pmsamplesize(k = K, n_events = events,
+simulation = "glm", sim_params = list(c_stats = c_stats, prev = prev))
+}
+\references{
+\insertCite{sample.criteria-package}{sample.criteria}
 }

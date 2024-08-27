@@ -1,20 +1,39 @@
 #' Sample Criteria Extension for Multinomial Regression
 #'
+#' @importFrom Rdpack reprompt
+#'
+#' @description
+#' Calculate sample criteria basing on multinominal regression. The criteria are
+#' defined in Riley's work.
+#'
+#' @details
+#' Additional details...
+#'
+#' @references
+#' \insertCite{sample.criteria-package}{sample.criteria}
+#'
 #' @param k An integer. The number of levels in response variable
 #' @param Q An integer. The number of candidate predictors. See Details
 #' @param props A numeric vector. The proportions of each events
 #' @param n_events A integer vector. The number of each events
-#' @param shrinkage Default is 0.9
-#' @param r2_cs A vector
-#' @param r2_nagelkerke
-#' @param simulation
+#' @param shrinkage A pre-defined shrinkage factor. Default to 0.9
+#' @param r2_cs A numeric vector. Pre-defined Cox-Snell \eqn{R^2}.
+#' @param r2_nagelkerke An adjustment for Cox-Snell \eqn{R^2}. Default to 0.15.
+#' @param simulation Either \code{glm} or \code{lrm}. See details.
 #' @param sim_params A list of pairwise C statistics and prevalences
-#' @param sigma
+#' @param sigma A single double. tolerate rate between adjusted \eqn{R^2} and apparent \eqn{R^2}
 #'
-#' @return
+#' @return An integer
 #' @export
 #'
 #' @examples
+#' K <- 5
+#' events <- c(2557, 186, 176, 467, 120)
+#' c_stats <- c(0.85, 0.92, 0.99, 0.95, 0.75, 0.95, 0.87, 0.87, 0.71, 0.82)
+#' prev <- phi_pairs(events)
+#' set.seed(101)
+#' pmsamplesize(k = K, n_events = events,
+#' simulation = "glm", sim_params = list(c_stats = c_stats, prev = prev))
 pmsamplesize <- function(k,
                          Q = NULL,
                          props,
