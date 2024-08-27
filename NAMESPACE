@@ -2,4 +2,5 @@
 
 export(approximate_R2)
 export(pmsamplesize)
+importFrom(Rdpack,reprompt)
 importFrom(rms,lrm)
