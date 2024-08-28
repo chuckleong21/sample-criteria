@@ -5,58 +5,59 @@
 \title{Sample Criteria Extension for Multinomial Regression}
 \usage{
 pmsamplesize(
+  Q,
   k,
-  Q = NULL,
-  props,
-  n_events,
-  shrinkage = 0.9,
+  p,
   r2_cs = NULL,
+  auc = NULL,
+  prev,
+  shrinkage = 0.9,
   r2_nagelkerke = 0.15,
-  simulation = c("glm", "lrm"),
-  sim_params = NULL,
-  sigma = 0.05
+  sigma = 0.05,
+  margin_error = 0.05
 )
 }
 \arguments{
-\item{k}{An integer. The number of levels in response variable}
-
 \item{Q}{An integer. The number of candidate predictors. See Details}
 
-\item{props}{A numeric vector. The proportions of each events}
+\item{k}{An integer. The number of levels in response variable}
 
-\item{n_events}{A integer vector. The number of each events}
+\item{p}{A numeric vector. Outcome proportion(s)}
+
+\item{r2_cs}{numeric. Cox-Snell \eqn{R^2}.}
+
+\item{auc}{numeric. Pairwise C statistics}
+
+\item{prev}{numeric. Outcome proportions in categories relative to reference}
 
 \item{shrinkage}{A pre-defined shrinkage factor. Default to 0.9}
 
-\item{r2_cs}{A numeric vector. Pre-defined Cox-Snell \eqn{R^2}.}
-
 \item{r2_nagelkerke}{An adjustment for Cox-Snell \eqn{R^2}. Default to 0.15.}
 
-\item{simulation}{Either \code{glm} or \code{lrm}. See details.}
+\item{sigma}{A double. tolerate rate between adjusted \eqn{R^2} and apparent \eqn{R^2}. Default to 0.05}
 
-\item{sim_params}{A list of pairwise C statistics and prevalences}
-
-\item{sigma}{A single double. tolerate rate between adjusted \eqn{R^2} and apparent \eqn{R^2}}
+\item{margin_error}{A divergence for margin error specified by Chi-sqaure distribution's confidence level.
+Deault to 0.05}
 }
 \value{
 An integer
 }
 \description{
-Calculate sample criteria basing on multinominal regression. The criteria are
-defined in Riley's work.
+Calculate sample criteria extended for multinominal regression.
 }
 \details{
-Additional details...
+Sample Criteria for Clinical Prediction Model are based on the work of
+(Riley 2018)\link{https://onlinelibrary.wiley.com/doi/full/10.1002/sim.7992} and
+(Calster 2020)\link{https://onlinelibrary.wiley.com/doi/epdf/10.1002/sim.8806}
 }
 \examples{
 K <- 5
 events <- c(2557, 186, 176, 467, 120)
 c_stats <- c(0.85, 0.92, 0.99, 0.95, 0.75, 0.95, 0.87, 0.87, 0.71, 0.82)
 prev <- phi_pairs(events)
-set.seed(101)
-pmsamplesize(k = K, n_events = events,
-simulation = "glm", sim_params = list(c_stats = c_stats, prev = prev))
+set.seed(1234)
+pmsamplesize(Q = 30, k = 2, auc = 0.81, prev = 0.77)
 }
 \references{
-\insertCite{sample.criteria-package}{sample.criteria}
+\insertCite{pmsamplesize}{sample.criteria}
 }

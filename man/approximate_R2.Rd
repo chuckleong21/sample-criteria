@@ -2,13 +2,33 @@
 % Please edit documentation in R/simulation.R
 \name{approximate_R2}
 \alias{approximate_R2}
-\title{Title}
+\title{R-sqaure approximation}
 \usage{
-approximate_R2(method, auc, prev, n = 1e+06)
+approximate_R2(k, auc, prev, n = 1e+06)
 }
 \arguments{
-\item{n}{}
+\item{k}{An scalar integer. The number of outcomes, \eqn{k\geq{2}}}
+
+\item{auc}{A double. Reported pairwise C-statistics}
+
+\item{prev}{A double. The outcome  reporting the existing prediction model}
+
+\item{n}{An integer. Simulation sample size. Default to \emph{1e6}}
+}
+\value{
+\itemize{
+\item For binary outcome, approximate_R2() bases on \insertCite{r2-approx}{sample.criteria}
+using \code{rms} package. It returns a list containing the \eqn{R^2_{CS}} and \eqn{R^2_{Nagelkerke}}
+\item While for multinomial models, A Bernoulli simulation is used, based on
+\insertCite{pmsamplesize}{sample.criteria}.
+}
 }
 \description{
-Title
+\eqn{R^2} approximation based on Riley's approach when \eqn{R^2_{CS}} is not
+reported.
+}
+\examples{
+sim <- approximate_R2(k = 2, auc = 0.81, prev = 0.77)
+sim[["R2.coxsnell"]] # coxsnell R2
+sim[["R2.nagelkerke"]] # nagerlkerke R2
 }
