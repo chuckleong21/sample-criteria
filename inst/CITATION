@@ -8,5 +8,17 @@ bibentry(
   number   = 3,
   pages    = "555-571",
   doi      = "10.1177/09622802231151220",
-  key = "sample.criteria-package"
+  key = "pmsamplesize"
+)
+
+bibentry(
+  bibtype  = "Article",
+  title    = "A note on estimating the Cox-Snell R2 from a reported Cstatistic (AUROC) to inform sample size calculations fordeveloping a prediction model with a binary outcome",
+  author   = person("Richard", "Riley", role = "aut"),
+  journal  = "Statistics In Medicine",
+  year     = 2020,
+  volume   = 40,
+  pages    = "859–864",
+  doi      = "10.1002/sim.8806",
+  key = "r2-approx"
 )
