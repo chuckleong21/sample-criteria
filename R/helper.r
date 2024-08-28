@@ -1,3 +1,12 @@
+#' Calculate proportions of group k relative to reference group r
+#'
+#' @param n_events Event counts in group k and r
+#'
+#' @return A vector that has length of \eqn{C^k_{2}}
+#' @export
+#'
+#' @examples
+#' phi_pairs(c(2557, 186, 176, 467, 120))
 phi_pairs <- function(n_events) {
   K <- length(n_events)
   x <- Reduce(c, sapply(seq_len(K-1), function(i) n_events[-seq_len(i)]))

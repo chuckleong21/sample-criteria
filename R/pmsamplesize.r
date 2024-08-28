@@ -148,8 +148,8 @@ pmsamplesize_multi <- function(Q,
 #'
 #' @details
 #' Sample Criteria for Clinical Prediction Model are based on the work of
-#' (Riley 2018)[https://onlinelibrary.wiley.com/doi/full/10.1002/sim.7992] and
-#' (Calster 2020)[https://onlinelibrary.wiley.com/doi/epdf/10.1002/sim.8806]
+#' \href{https://onlinelibrary.wiley.com/doi/full/10.1002/sim.7992}{Riley 2018} and
+#' \href{https://onlinelibrary.wiley.com/doi/epdf/10.1002/sim.8806}{Calster 2020}
 #'
 #' @references
 #' \insertCite{pmsamplesize}{sample.criteria}

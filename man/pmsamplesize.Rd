@@ -47,8 +47,8 @@ Calculate sample criteria extended for multinominal regression.
 }
 \details{
 Sample Criteria for Clinical Prediction Model are based on the work of
-(Riley 2018)\link{https://onlinelibrary.wiley.com/doi/full/10.1002/sim.7992} and
-(Calster 2020)\link{https://onlinelibrary.wiley.com/doi/epdf/10.1002/sim.8806}
+\href{https://onlinelibrary.wiley.com/doi/full/10.1002/sim.7992}{Riley 2018} and
+\href{https://onlinelibrary.wiley.com/doi/epdf/10.1002/sim.8806}{Calster 2020}
 }
 \examples{
 K <- 5
