@@ -170,10 +170,6 @@ pmsamplesize_multi <- function(Q,
 #' @export
 #'
 #' @examples
-#' K <- 5
-#' events <- c(2557, 186, 176, 467, 120)
-#' c_stats <- c(0.85, 0.92, 0.99, 0.95, 0.75, 0.95, 0.87, 0.87, 0.71, 0.82)
-#' prev <- phi_pairs(events)
 #' set.seed(1234)
 #' pmsamplesize(Q = 30, k = 2, auc = 0.81, prev = 0.77)
 pmsamplesize <- function(Q, k, p,
