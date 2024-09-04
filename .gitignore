@@ -1,6 +1,5 @@
 .Rproj.user
 .pdf
-inst/doc
 docs
-/doc/
 /Meta/
+/inst/pdf
