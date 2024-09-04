@@ -8,11 +8,13 @@ pmsamplesize(
   Q,
   k,
   p,
-  r2_cs = NULL,
-  auc = NULL,
-  prev,
+  adjust = FALSE,
+  r2_cs_app = NULL,
+  r2_cs_adj = NULL,
   shrinkage = 0.9,
   r2_nagelkerke = 0.15,
+  auc = NULL,
+  prev = NULL,
   sigma = 0.05,
   margin_error = 0.05
 )
@@ -22,42 +24,71 @@ pmsamplesize(
 
 \item{k}{An integer. The number of levels in response variable}
 
-\item{p}{A numeric vector. Outcome proportion(s)}
+\item{p}{A numeric vector. Outcome proportion(s) or event observations}
 
-\item{r2_cs}{numeric. Cox-Snell \eqn{R^2}.}
+\item{adjust}{A logical. Should adjusted R-square value be used? Default to FALSE}
 
-\item{auc}{numeric. Pairwise C statistics}
+\item{r2_cs_app}{A numeric vector. The apparent Cox-Snell \eqn{R^2}}
 
-\item{prev}{numeric. Outcome proportions in categories relative to reference}
+\item{r2_cs_adj}{A numeric vector. The optimism-adjusted Cox-Snell \eqn{R^2}}
 
 \item{shrinkage}{A pre-defined shrinkage factor. Default to 0.9}
 
 \item{r2_nagelkerke}{An adjustment for Cox-Snell \eqn{R^2}. Default to 0.15.}
 
-\item{sigma}{A double. tolerate rate between adjusted \eqn{R^2} and apparent \eqn{R^2}. Default to 0.05}
+\item{auc}{A numeric vector. Pairwise C statistics}
 
-\item{margin_error}{A divergence for margin error specified by Chi-sqaure distribution's confidence level.
-Deault to 0.05}
+\item{prev}{A numeric vector. Outcome proportions in categories relative to reference}
+
+\item{sigma}{A double. Tolerate rate between adjusted \eqn{R^2} and apparent \eqn{R^2}. Default to 0.05}
+
+\item{margin_error}{A double. A divergence for margin error specified by
+Chi-square distribution's confidence level. Default to 0.05}
 }
 \value{
-An integer
+A \code{pmsample} class object
+\itemize{
+\item \strong{final}: A single row data frame representing the selected criterion for
+the minimum sample size for developing a new model
+\item \strong{criteria}: A data frame containing all the sample sizes
+based on three criteria. Divergences in sample sizes due to number rounding
+\item sigma: A single numeric representing the tolerate rate between
+adjusted \eqn{R^2} and apparent \eqn{R^2}
+\item margin_error: A divergence for margin error specified by
+Chi-square distribution's confidence level
+}
 }
 \description{
 Calculate sample criteria extended for multinominal regression.
 }
 \details{
-Sample Criteria for Clinical Prediction Model are based on the work of
-\href{https://onlinelibrary.wiley.com/doi/full/10.1002/sim.7992}{Riley 2018} and
-\href{https://onlinelibrary.wiley.com/doi/epdf/10.1002/sim.8806}{Calster 2020}
+The pmsample objects created by \code{pmsamplesize} can represent the minimum
+sample size needed for developing a new model based on the current studies.
+
+\code{pmsamplesize} function adapts the amount of information based on
+the type of model. A certain parameters need pre-specifying for calculation:
+\itemize{
+\item The number of candidate predicators \emph{Q}, usually obtained using
+the fractional polynomial method and it is not addressed by this package.
+\item The number of levels in response variable \emph{k}, typically for
+a binary model k = 2, for multinomial models k > 2. One of the argument
+between \code{k} or \code{p}, the outcome proportions or the observation counts
+of the events, must be specified. In the case of a missing \code{k}, it will
+then defined by the length of \code{p}.
+\item The order of p matters for calculation: for a binary model, the second value
+in the vector is perceived as 'outcome proportion' or 'outcome events'.
+\item Pairwise C-statistics \code{auc} for simulation. The process requires
+estimates of the pairwise outcome proportions \eqn{\phi_{k,r}} of
+category \emph{k} relative to the reference category \emph{r}, \code{prev}.
+If not supplied, they will be derived from \code{p}.
+}
 }
 \examples{
-K <- 5
-events <- c(2557, 186, 176, 467, 120)
-c_stats <- c(0.85, 0.92, 0.99, 0.95, 0.75, 0.95, 0.87, 0.87, 0.71, 0.82)
-prev <- phi_pairs(events)
+# when only C statistics is reported in a binary model
 set.seed(1234)
-pmsamplesize(Q = 30, k = 2, auc = 0.81, prev = 0.77)
+pmsamplesize(Q = 30, k = 2, r2_nagelkerke = 0.15, auc = 0.81, prev = 0.77)
 }
 \references{
-\insertCite{pmsamplesize}{sample.criteria}
+\insertCite{pmsamplesize-multinomial}{sample.criteria}
+\insertCite{pmsamplesize-binary}{sample.criteria}
 }

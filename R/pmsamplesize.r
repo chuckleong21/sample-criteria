@@ -5,7 +5,7 @@ print.pmsample <- function(x, ...) {
   message(paste("NB: Events per Predictor Parameter assumes prevalance", round(x$prev, 3), "\n"))
   print(x$criteria)
   cat(sprintf("Minimum sample size required for new model development based on user inputs = %.0f,
- with %.0f events (assuming an outcome prevalence = %.3g) and an EPP = %.3g",
+ with %.0f events (assuming an outcome prevalence = %.3g) and an EPP = %.3g\n",
               x$final$sample_size,
               x$final$sample_size * x$prev,
               x$prev, x$final$EPP))
@@ -18,126 +18,6 @@ print.pmsample_multi <- function(x, ...) {
   print(x$criteria)
 }
 
-pmsamplesize_binary <- function(Q,
-                                p,
-                                r2_cs,
-                                shrinkage = 0.9,
-                                r2_nagelkerke = 0.15,
-                                auc,
-                                prev,
-                                sigma = 0.05,
-                                margin_error = 0.05) {
-  if(is.null(r2_cs) & missing(p)) {
-    r2 <- approximate_R2(k = 2, auc = auc, prev = prev)
-    max_r2_csapp <- r2[["R2.nagelkerke"]]
-    r2_csadj <- r2[["R2.coxsnell"]]
-
-    crits <- crit(Q = Q,
-                  max_r2_csapp = max_r2_csapp,
-                  r2_csadj = r2_csadj,
-                  prev = prev)
-  }
-
-  if(is.null(r2_cs) & !missing(p)) {
-    k <- 2; events <- p$events; pr <- p$p[-which(p$p == 1)]
-    names(pr) <- NULL; prev <- ifelse(missing(prev), pr[k], prev)
-    LR <- round(events[k]*log(pr[k])+(sum(events)-events[k])*log(1-pr[k]), 2)
-    max_r2_csapp <- round(1-exp(2*LR/sum(events)), 2)
-    r2_csapp <- r2_csadj <- r2_nagelkerke * max_r2_csapp
-
-    crits <- crit(Q = Q,
-                  max_r2_csapp = max_r2_csapp,
-                  r2_csadj = r2_csadj,
-                  prev = prev)
-  }
-
-  if(!is.null(r2_cs)) {
-    max_r2_csapp <- r2_cs; r2_csadj <- r2_nagelkerke * max_r2_csapp
-    crits <- crit(Q = Q,
-                  max_r2_csapp = max_r2_csapp,
-                  r2_csadj = r2_csadj,
-                  prev = prev)
-  }
-
-  res <- data.frame(sample_size = crits,
-                    shrinkage = c(shrinkage, rep(r2_csadj / (r2_csadj + sigma * max_r2_csapp), 2)),
-                    parameter = Q,
-                    CS_Rsq = r2_csadj,
-                    Max_Rsq = max_r2_csapp,
-                    Nag_Rsq = ifelse(missing(p), max_r2_csapp, r2_nagelkerke),
-                    EPP = crits * prev/Q)
-  res[4, ] <- res[which.max(res$sample_size), ]
-  rownames(res) <- c(paste0("Criteria ", 1:3), "Final")
-
-  x <- list(final = res[4, ],
-            criteria = res,
-            sigma = sigma,
-            margin_error = margin_error,
-            prevalance = prev)
-  class(x) <- c("pmsample")
-  x
-}
-
-pmsamplesize_multi <- function(Q,
-                               k,
-                               p,
-                               r2_cs,
-                               shrinkage = 0.9,
-                               r2_nagelkerke = 0.15,
-                               auc = NULL,
-                               prev = NULL,
-                               sigma = 0.05,
-                               margin_error = 0.05) {
-  events <- p$events; pr <- p$p
-  if(is.null(names(pr))) {
-    kk <- Reduce(c, sapply(seq_len(k-1), function(i) seq(k)[-seq_len(i)]))
-    rr <- rep(seq_len(k)[-k], rev(seq_len(k-1)))
-    names(pr) <- c(seq_len(k),
-                   sprintf("%d_%d", kk, rr))
-  }
-
-  pk <- pr[which(!grepl("_", names(pr)))]
-  pkr <- pr[-which(!grepl("_", names(pr)))]
-
-  if(!is.null(prev)) {
-    prev
-  } else {
-    prev <- phi_pairs(events)
-  }
-  max_r2_csapp <- 1 - (prod(pk^pk)^2)
-  r2_csadj <- r2_nagelkerke * max_r2_csapp
-  if(is.null(auc)) {
-    phis <- phi_pairs(events)
-    max_r2_csappkr <- 1 - (phis^phis*(1-phis)^(1-phis))^2
-    r2_csadjkr <- r2_nagelkerke*max_r2csappkr
-  }
-  r2_csadjkr <- mapply(approximate_R2, k = k, auc = auc, prev = prev)
-  crits <- crit(Q = Q,
-                max_r2_csapp = max_r2_csapp,
-                r2_csadj = r2_csadj,
-                r2_csadjkr = r2_csadjkr,
-                k = k,
-                pk = pk,
-                pkr = pkr)
-  res <- data.frame(sample_size = crits,
-                    shrinkage = c(shrinkage, rep(r2_csadj / (r2_csadj + sigma * max_r2_csapp), 2)),
-                    parameter = Q,
-                    CS_Rsq = r2_csadj,
-                    Max_Rsq = max_r2_csapp,
-                    Nag_Rsq = ifelse(missing(p), max_r2_csapp, r2_nagelkerke)
-                    # EPP = crits * prev/Q
-  )
-  res[4, ] <- res[which.max(res$sample_size), ]
-  rownames(res) <- c(paste0("Criteria ", 1:3), "Final")
-
-  x <- list(final = res[4, ],
-            criteria = res,
-            sigma = sigma,
-            margin_error = margin_error,
-            prevalance = prev)
-  class(x) <- "pmsample_multi"
-  x
-}
 
 #' Sample Criteria Extension for Multinomial Regression
 #'
@@ -147,46 +27,216 @@ pmsamplesize_multi <- function(Q,
 #' Calculate sample criteria extended for multinominal regression.
 #'
 #' @details
-#' Sample Criteria for Clinical Prediction Model are based on the work of
-#' \href{https://onlinelibrary.wiley.com/doi/full/10.1002/sim.7992}{Riley 2018} and
-#' \href{https://onlinelibrary.wiley.com/doi/epdf/10.1002/sim.8806}{Calster 2020}
+#' The pmsample objects created by \code{pmsamplesize} can represent the minimum
+#' sample size needed for developing a new model based on the current studies.
+#'
+#' \code{pmsamplesize} function adapts the amount of information based on
+#' the type of model. A certain parameters need pre-specifying for calculation:
+#' - The number of candidate predicators \emph{Q}, usually obtained using
+#' the fractional polynomial method and it is not addressed by this package.
+#' - The number of levels in response variable \emph{k}, typically for
+#' a binary model k = 2, for multinomial models k > 2. One of the argument
+#' between \code{k} or \code{p}, the outcome proportions or the observation counts
+#' of the events, must be specified. In the case of a missing \code{k}, it will
+#' then defined by the length of \code{p}.
+#' - The order of p matters for calculation: for a binary model, the second value
+#' in the vector is perceived as 'outcome proportion' or 'outcome events'.
+#' - Pairwise C-statistics \code{auc} for simulation. The process requires
+#' estimates of the pairwise outcome proportions \eqn{\phi_{k,r}} of
+#' category \emph{k} relative to the reference category \emph{r}, \code{prev}.
+#' If not supplied, they will be derived from \code{p}.
 #'
 #' @references
-#' \insertCite{pmsamplesize}{sample.criteria}
+#' \insertCite{pmsamplesize-multinomial}{sample.criteria}
+#' \insertCite{pmsamplesize-binary}{sample.criteria}
 #'
 #' @param Q An integer. The number of candidate predictors. See Details
 #' @param k An integer. The number of levels in response variable
-#' @param p A numeric vector. Outcome proportion(s)
+#' @param p A numeric vector. Outcome proportion(s) or event observations
+#' @param adjust A logical. Should adjusted R-square value be used? Default to FALSE
+#' @param r2_cs_app A numeric vector. The apparent Cox-Snell \eqn{R^2}
+#' @param r2_cs_adj A numeric vector. The optimism-adjusted Cox-Snell \eqn{R^2}
 #' @param shrinkage A pre-defined shrinkage factor. Default to 0.9
-#' @param r2_cs numeric. Cox-Snell \eqn{R^2}.
 #' @param r2_nagelkerke An adjustment for Cox-Snell \eqn{R^2}. Default to 0.15.
-#' @param auc numeric. Pairwise C statistics
-#' @param prev numeric. Outcome proportions in categories relative to reference
-#' @param sigma A double. tolerate rate between adjusted \eqn{R^2} and apparent \eqn{R^2}. Default to 0.05
-#' @param margin_error A divergence for margin error specified by Chi-sqaure distribution's confidence level.
-#' Deault to 0.05
+#' @param auc A numeric vector. Pairwise C statistics
+#' @param prev A numeric vector. Outcome proportions in categories relative to reference
+#' @param sigma A double. Tolerate rate between adjusted \eqn{R^2} and apparent \eqn{R^2}. Default to 0.05
+#' @param margin_error A double. A divergence for margin error specified by
+#' Chi-square distribution's confidence level. Default to 0.05
 #'
-#' @return An integer
+#' @return A \code{pmsample} class object
+#' * \strong{final}: A single row data frame representing the selected criterion for
+#' the minimum sample size for developing a new model
+#' * \strong{criteria}: A data frame containing all the sample sizes
+#' based on three criteria. Divergences in sample sizes due to number rounding
+#' * sigma: A single numeric representing the tolerate rate between
+#' adjusted \eqn{R^2} and apparent \eqn{R^2}
+#' * margin_error: A divergence for margin error specified by
+#' Chi-square distribution's confidence level
 #' @export
 #'
 #' @examples
+#' # when only C statistics is reported in a binary model
 #' set.seed(1234)
-#' pmsamplesize(Q = 30, k = 2, auc = 0.81, prev = 0.77)
-pmsamplesize <- function(Q, k, p,
-                         r2_cs = NULL,
-                         auc = NULL,
-                         prev,
-                         shrinkage  = 0.9,
-                         r2_nagelkerke = 0.15,
-                         sigma = 0.05,
+#' pmsamplesize(Q = 30, k = 2, r2_nagelkerke = 0.15, auc = 0.81, prev = 0.77)
+pmsamplesize <- function(Q, k, p, adjust = FALSE,
+                         r2_cs_app = NULL, r2_cs_adj = NULL,
+                         shrinkage = 0.9, r2_nagelkerke = 0.15,
+                         auc = NULL, prev = NULL, sigma = 0.05,
                          margin_error = 0.05) {
+  # constraints on k
+  # inadequate information error msg
+  err_msg <- "Inadequate information to derive `r2_cs_app`, try to supply a `r2_cs_app` or `r2_cs_adj` value"
+  k <- ifelse(missing(k), length(p), k)
+  if(missing(p)) {
+    if(!is.null(r2_cs_app) | !is.null(r2_cs_adj)) {
+      available_crit2 <- FALSE
+    } else if(!is.null(auc) & !is.null(prev)) {
+      available_crit2 <- FALSE
+      r2_cs_app <- round(approximate_R2(k = k, auc = auc, prev = prev)[["R2.coxsnell"]], 2)
+    }
+  }
+  stopifnot("k is not at least equal or greater than 2" = k >= 2)
+
+  # k = 2
   if(k == 2) {
-    pmsamplesize_binary(Q = Q, p = p, r2_cs = r2_cs,
-                        shrinkage = shrinkage, r2_nagelkerke = r2_nagelkerke, auc = auc, prev = prev,
-                        sigma = sigma, margin_error = margin_error)
-  } else {
-    pmsamplesize_multi(Q = Q, k = k, p = p, r2_cs = r2_cs,
-                       shrinkage = shrinkage, r2_nagelkerke = r2_nagelkerke, auc = auc, prev = prev,
-                       sigma = sigma, margin_error = margin_error)
+
+    ## constraints on p
+    if(!missing(p)) is_prop <- all(p > 0 & p < 1)
+
+    ## deriving r2_cs_adj: E, n information requires to be available
+    if(is.null(r2_cs_adj)) {
+      if(is.null(r2_cs_app)) {
+        if(exists("is_prop")) {
+          if(!is_prop) {
+            ## when p are events' count
+            ## the second value in the vector is the count of outcome
+            n <- sum(p); E <- p[-1]; LR_null <- E*log(E/n) + (n-E)*log(1-E/n)
+            # r2_cs_app = r2_nagelkerke * max(r2_cs_app)
+            r2_cs_app <- r2_nagelkerke * round((1 - exp(2*LR_null/n)), 2)
+            # if r2_cs_app is available prior
+            # r2_cs_adj = s * r2_cs_app
+            r2_cs_adj <- shrinkage * r2_cs_app
+          } else stop(err_msg, call. = FALSE)
+        }
+      } else {
+        r2_cs_adj <- shrinkage * r2_cs_app
+      }
+    } else if(!adjust) {
+      r2_cs_app <- r2_cs_adj
+    }
+
+    ## whether r2_cs_adj = r2_cs_app?
+    r2_cs_adj <- ifelse(adjust, r2_cs_adj, r2_cs_app)
+
+    ### criterion 1: baseline on shrinkage = 0.9
+    crit1 <- ceiling(Q / ((shrinkage - 1) * log(1 - r2_cs_adj/shrinkage)))
+    ### criterion 2: baseline on adjusted shrinkage
+    ### by absolute difference in proportions of variance explained
+    if(!exists("available_crit2")) {
+      shrinkage_crit2 <- round(r2_cs_adj / (r2_cs_adj + sigma*round(1 - exp(2*LR_null/n), 2)), 3)
+      crit2 <- ceiling(Q / ((shrinkage_crit2 - 1) * log(1 - r2_cs_adj/shrinkage_crit2)))
+    } else {
+      warning("Inadequate information to calculate sample size for criterion 2")
+      crit2 <- NA; shrinkage_crit2 <- NA
+    }
+    ### criterion 3: baseline on overall risk restrainted by margin error
+    if(!is.null(prev)) {
+      crit3 <- ceiling((1.96/margin_error)^2*prev*(1-prev))
+    } else if(!missing(p)) {
+      crit3 <- ceiling((1.96/margin_error)^2*(E/n)*(1-E/n))
+    } else {
+      warning("Inadequate information to calculate sample size for criterion 3")
+      crit3 <- NA
+    }
+
+    res <- data.frame(
+      sample_size = c(crit1, crit2, crit3),
+      shrinkage = c(shrinkage, shrinkage_crit2, shrinkage),
+      parameter = Q,
+      CS_Rsq = r2_cs_adj,
+      Max_Rsq = ifelse(missing(p), NA, round(1 - exp(2*LR_null/n), 2)),
+      Nag_Rsq = r2_nagelkerke
+    )
+
+    if(missing(p)) {
+      if(!is.null(prev)) {
+        res$EPP <- round(res$sample_size * prev/Q, 2)
+      } else {
+        res$EPP <- NA
+      }
+    } else {
+      res$EPP <- round((res$sample_size*E/n)/Q, 2)
+    }
+
+    res[4, ] <- res[which.max(res$sample_size), ]
+    rownames(res) <- c(paste0("Criteria ", 1:3), "Final")
+    if(!missing(p)) prevalance <- E/n
+    if(!is.null(prev)) prevalance <- prev
+    if(missing(p) & is.null(prev)) prevalance <- NA
+
+    x <- list(final = res[4, ],
+              criteria = res[complete.cases(res$sample_size), ],
+              sigma = sigma,
+              margin_error = margin_error,
+              prev = prevalance)
+    class(x) <- c("pmsample")
+    return(x)
+  }
+
+  # k > 2
+  if(k != 2) {
+    prop <- all(p > 0 & p < 1)
+    if(prop) {
+      pk <- p; pkr <- margin.table(combn(p, 2), 2)
+    } else {
+      pk <- p / sum(p); pkr <- margin.table(combn(p, 2), 2) / sum(p)
+    }
+
+    if(is.null(r2_cs_adj)) {
+      if(is.null(r2_cs_app)) {
+        if(is.null(prev)) {
+          prev <- pk[Reduce(c, sapply(seq_along(pk), function(i) seq_along(pk)[-seq_len(i)]))] / pkr
+        }
+        r2_cs_adj_kr <- mapply(approximate_R2, k = k, auc = auc, prev = prev)
+      } else {
+        if(length(r2_cs_app) != ncol(combn(p, 2))) {
+          stop(sprintf('"r2_cs_app" expects length of %g, got %g', ncol(combn(p, 2)), length(r2_cs_app)))
+        }
+        r2_cs_adj_kr <- r2_nagelkerke * r2_cs_app
+      }
+    } else {
+      if(length(r2_cs_adj) != ncol(combn(p, 2))) {
+        stop(sprintf('"r2_cs_adj" expects length of %g, got %g', ncol(combn(p, 2)), length(r2_cs_app)))
+      }
+      r2_cs_adj_kr <- r2_cs_adj
+    }
+
+    crit1 <- ceiling(max((Q / ((shrinkage - 1)*log(1-r2_cs_adj_kr/shrinkage))) / pkr))
+
+    r2_cs_app <- 1 - prod(pk^pk)^2; r2_cs_adj <- r2_nagelkerke * r2_cs_app
+    shrinkage_crit2 <- r2_cs_adj / (r2_cs_adj + sigma * r2_cs_app)
+    crit2 <- ceiling(((k-1)*Q) / (shrinkage_crit2-1) * log(1-r2_cs_adj-sigma*r2_cs_app))
+
+    crit3 <- ceiling(max(qchisq(0.05/k, 1, lower.tail = FALSE)*pk*(1-pk) / sigma^2))
+
+    res <- data.frame(
+      sample_size = c(crit1, crit2, crit3),
+      shrinkage = c(shrinkage, shrinkage_crit2, shrinkage),
+      parameter = Q,
+      CS_Rsq = r2_cs_adj,
+      Max_Rsq = r2_cs_app,
+      Nag_Rsq = r2_nagelkerke
+    )
+
+    res[4, ] <- res[which.max(res$sample_size), ]
+    rownames(res) <- c(paste0("Criteria ", 1:3), "Final")
+
+    x <- list(final = res[4, ],
+              criteria = res[complete.cases(res$sample_size), ],
+              sigma = sigma,
+              margin_error = margin_error)
+    class(x) <- c("pmsample_multi")
+    return(x)
   }
 }
