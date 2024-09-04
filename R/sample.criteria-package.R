@@ -10,5 +10,6 @@
 #' @importFrom stats rbinom
 #' @importFrom stats rnorm
 #' @importFrom utils combn
+#' @importFrom stats complete.cases
 ## usethis namespace: end
 NULL
