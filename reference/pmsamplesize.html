@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">sample.criteria</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9500</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9562</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -19,6 +19,7 @@
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/jingwen517/sample-criteria.git/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
 
 
@@ -28,7 +29,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Sample Criteria Extension for Multinomial Regression</h1>
-
+      <small class="dont-index">Source: <a href="https://github.com/jingwen517/sample-criteria.git/blob/main/R/pmsamplesize.r" class="external-link"><code>R/pmsamplesize.r</code></a></small>
       <div class="d-none name"><code>pmsamplesize.Rd</code></div>
     </div>
 
@@ -42,11 +43,13 @@
 <span>  <span class="va">Q</span>,</span>
 <span>  <span class="va">k</span>,</span>
 <span>  <span class="va">p</span>,</span>
-<span>  r2_cs <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  auc <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  <span class="va">prev</span>,</span>
+<span>  adjust <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  r2_cs_app <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  r2_cs_adj <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  shrinkage <span class="op">=</span> <span class="fl">0.9</span>,</span>
 <span>  r2_nagelkerke <span class="op">=</span> <span class="fl">0.15</span>,</span>
+<span>  auc <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  prev <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  sigma <span class="op">=</span> <span class="fl">0.05</span>,</span>
 <span>  margin_error <span class="op">=</span> <span class="fl">0.05</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -65,19 +68,19 @@
 
 
 <dt id="arg-p">p<a class="anchor" aria-label="anchor" href="#arg-p"></a></dt>
-<dd><p>A numeric vector. Outcome proportion(s)</p></dd>
+<dd><p>A numeric vector. Outcome proportion(s) or event observations</p></dd>
 
 
-<dt id="arg-r-cs">r2_cs<a class="anchor" aria-label="anchor" href="#arg-r-cs"></a></dt>
-<dd><p>numeric. Cox-Snell \(R^2\).</p></dd>
+<dt id="arg-adjust">adjust<a class="anchor" aria-label="anchor" href="#arg-adjust"></a></dt>
+<dd><p>A logical. Should adjusted R-square value be used? Default to FALSE</p></dd>
 
 
-<dt id="arg-auc">auc<a class="anchor" aria-label="anchor" href="#arg-auc"></a></dt>
-<dd><p>numeric. Pairwise C statistics</p></dd>
+<dt id="arg-r-cs-app">r2_cs_app<a class="anchor" aria-label="anchor" href="#arg-r-cs-app"></a></dt>
+<dd><p>A numeric vector. The apparent Cox-Snell \(R^2\)</p></dd>
 
 
-<dt id="arg-prev">prev<a class="anchor" aria-label="anchor" href="#arg-prev"></a></dt>
-<dd><p>numeric. Outcome proportions in categories relative to reference</p></dd>
+<dt id="arg-r-cs-adj">r2_cs_adj<a class="anchor" aria-label="anchor" href="#arg-r-cs-adj"></a></dt>
+<dd><p>A numeric vector. The optimism-adjusted Cox-Snell \(R^2\)</p></dd>
 
 
 <dt id="arg-shrinkage">shrinkage<a class="anchor" aria-label="anchor" href="#arg-shrinkage"></a></dt>
@@ -88,25 +91,53 @@
 <dd><p>An adjustment for Cox-Snell \(R^2\). Default to 0.15.</p></dd>
 
 
+<dt id="arg-auc">auc<a class="anchor" aria-label="anchor" href="#arg-auc"></a></dt>
+<dd><p>A numeric vector. Pairwise C statistics</p></dd>
+
+
+<dt id="arg-prev">prev<a class="anchor" aria-label="anchor" href="#arg-prev"></a></dt>
+<dd><p>A numeric vector. Outcome proportions in categories relative to reference</p></dd>
+
+
 <dt id="arg-sigma">sigma<a class="anchor" aria-label="anchor" href="#arg-sigma"></a></dt>
-<dd><p>A double. tolerate rate between adjusted \(R^2\) and apparent \(R^2\). Default to 0.05</p></dd>
+<dd><p>A double. Tolerate rate between adjusted \(R^2\) and apparent \(R^2\). Default to 0.05</p></dd>
 
 
 <dt id="arg-margin-error">margin_error<a class="anchor" aria-label="anchor" href="#arg-margin-error"></a></dt>
-<dd><p>A divergence for margin error specified by Chi-sqaure distribution's confidence level.
-Deault to 0.05</p></dd>
+<dd><p>A double. A divergence for margin error specified by
+Chi-square distribution's confidence level. Default to 0.05</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>An integer</p>
-    </div>
+    <p>A <code>pmsample</code> class object</p><ul><li><p><strong>final</strong>: A single row data frame representing the selected criterion for
+the minimum sample size for developing a new model</p></li>
+<li><p><strong>criteria</strong>: A data frame containing all the sample sizes
+based on three criteria. Divergences in sample sizes due to number rounding</p></li>
+<li><p>sigma: A single numeric representing the tolerate rate between
+adjusted \(R^2\) and apparent \(R^2\)</p></li>
+<li><p>margin_error: A divergence for margin error specified by
+Chi-square distribution's confidence level</p></li>
+</ul></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>Sample Criteria for Clinical Prediction Model are based on the work of
-<a href="https://onlinelibrary.wiley.com/doi/full/10.1002/sim.7992" class="external-link">Riley 2018</a> and
-<a href="https://onlinelibrary.wiley.com/doi/epdf/10.1002/sim.8806" class="external-link">Calster 2020</a></p>
-    </div>
+    <p>The pmsample objects created by <code>pmsamplesize</code> can represent the minimum
+sample size needed for developing a new model based on the current studies.</p>
+<p><code>pmsamplesize</code> function adapts the amount of information based on
+the type of model. A certain parameters need pre-specifying for calculation:</p><ul><li><p>The number of candidate predicators <em>Q</em>, usually obtained using
+the fractional polynomial method and it is not addressed by this package.</p></li>
+<li><p>The number of levels in response variable <em>k</em>, typically for
+a binary model k = 2, for multinomial models k &gt; 2. One of the argument
+between <code>k</code> or <code>p</code>, the outcome proportions or the observation counts
+of the events, must be specified. In the case of a missing <code>k</code>, it will
+then defined by the length of <code>p</code>.</p></li>
+<li><p>The order of p matters for calculation: for a binary model, the second value
+in the vector is perceived as 'outcome proportion' or 'outcome events'.</p></li>
+<li><p>Pairwise C-statistics <code>auc</code> for simulation. The process requires
+estimates of the pairwise outcome proportions \(\phi_{k,r}\) of
+category <em>k</em> relative to the reference category <em>r</em>, <code>prev</code>.
+If not supplied, they will be derived from <code>p</code>.</p></li>
+</ul></div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
     <p></p>
@@ -114,27 +145,19 @@ Deault to 0.05</p></dd>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">K</span> <span class="op">&lt;-</span> <span class="fl">5</span></span></span>
-<span class="r-in"><span><span class="va">events</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2557</span>, <span class="fl">186</span>, <span class="fl">176</span>, <span class="fl">467</span>, <span class="fl">120</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">c_stats</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.85</span>, <span class="fl">0.92</span>, <span class="fl">0.99</span>, <span class="fl">0.95</span>, <span class="fl">0.75</span>, <span class="fl">0.95</span>, <span class="fl">0.87</span>, <span class="fl">0.87</span>, <span class="fl">0.71</span>, <span class="fl">0.82</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">prev</span> <span class="op">&lt;-</span> <span class="fu"><a href="phi_pairs.html">phi_pairs</a></span><span class="op">(</span><span class="va">events</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># when only C statistics is reported in a binary model</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1234</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">pmsamplesize</span><span class="op">(</span>Q <span class="op">=</span> <span class="fl">30</span>, k <span class="op">=</span> <span class="fl">2</span>, auc <span class="op">=</span> <span class="fl">0.81</span>, prev <span class="op">=</span> <span class="fl">0.77</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">pmsamplesize</span><span class="op">(</span>Q <span class="op">=</span> <span class="fl">30</span>, k <span class="op">=</span> <span class="fl">2</span>, r2_nagelkerke <span class="op">=</span> <span class="fl">0.15</span>, auc <span class="op">=</span> <span class="fl">0.81</span>, prev <span class="op">=</span> <span class="fl">0.77</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Inadequate information to calculate sample size for criterion 2</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> NB: Assuming 0.05 acceptable difference in apparent &amp; adjusted R-squared</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> NB: Assuming 0.05 margin of error in estimation of intercept</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> NB: Events per Predictor Parameter assumes prevalance 0.77 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>            sample_size shrinkage parameter    CS_Rsq   Max_Rsq   Nag_Rsq</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Criteria 1        1129 0.9000000        30 0.2100957 0.3183689 0.3183689</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Criteria 2        1674 0.9295688        30 0.2100957 0.3183689 0.3183689</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Criteria 3         273 0.9295688        30 0.2100957 0.3183689 0.3183689</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Final             1674 0.9295688        30 0.2100957 0.3183689 0.3183689</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                 EPP</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Criteria 1 28.97767</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Criteria 2 42.96600</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Criteria 3  7.00700</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Final      42.96600</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Minimum sample size required for new model development based on user inputs = 1674,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  with 1289 events (assuming an outcome prevalence = 0.77) and an EPP = 43</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            sample_size shrinkage parameter CS_Rsq Max_Rsq Nag_Rsq   EPP</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Criteria 1        1130       0.9        30   0.21      NA    0.15 29.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Criteria 3         273       0.9        30   0.21      NA    0.15  7.01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Final             1130       0.9        30   0.21      NA    0.15 29.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Minimum sample size required for new model development based on user inputs = 1130,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  with 870 events (assuming an outcome prevalence = 0.77) and an EPP = 29</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
@@ -142,7 +165,7 @@ Deault to 0.05</p></dd>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by First Last.</p>
+  <p>Developed by Jingwen Sun.</p>
 </div>
 
 <div class="pkgdown-footer-right">

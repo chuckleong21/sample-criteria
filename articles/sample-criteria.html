@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">sample.criteria</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9500</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9562</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -36,6 +36,7 @@
 <li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
 </form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/jingwen517/sample-criteria.git/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
@@ -52,14 +53,14 @@
       <h1>sample-criteria</h1>
             
       
-
+      <small class="dont-index">Source: <a href="https://github.com/jingwen517/sample-criteria.git/blob/main/vignettes/sample-criteria.Rmd" class="external-link"><code>vignettes/sample-criteria.Rmd</code></a></small>
       <div class="d-none name"><code>sample-criteria.Rmd</code></div>
     </div>
 
     
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://chuckleong21.github.io/sample-criteria/">sample.criteria</a></span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jingwen517/sample-criteria.git" class="external-link">sample.criteria</a></span><span class="op">)</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
@@ -110,7 +111,7 @@ using the C statistics and event prevalence (outcome proportion). The
 steps are detailed in <a href="https://onlinelibrary.wiley.com/doi/epdf/10.1002/sim.8806" class="external-link">here</a>
 by Riley. We can execute the simulation with the following command:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://chuckleong21.github.io/sample-criteria/">sample.criteria</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jingwen517/sample-criteria.git" class="external-link">sample.criteria</a></span><span class="op">)</span></span>
 <span><span class="co"># Noted here that k = 2 for binary outcomes</span></span>
 <span><span class="fu"><a href="../reference/approximate_R2.html">approximate_R2</a></span><span class="op">(</span>k <span class="op">=</span> <span class="fl">2</span>, auc <span class="op">=</span> <span class="fl">0.81</span>, prev <span class="op">=</span> <span class="fl">0.77</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $R2.nagelkerke</span></span>
@@ -125,23 +126,19 @@ criteria of Riley et al. Using pmsamplesize() then we should have a
 minimum sample size of 1129:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1234</span><span class="op">)</span></span>
-<span><span class="va">scriteria</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/pmsamplesize.html">pmsamplesize</a></span><span class="op">(</span>Q <span class="op">=</span> <span class="fl">30</span>, k <span class="op">=</span> <span class="fl">2</span>, auc <span class="op">=</span> <span class="fl">0.81</span>, prev <span class="op">=</span> <span class="fl">0.77</span>, sigma <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span>
+<span><span class="va">scriteria</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/pmsamplesize.html">pmsamplesize</a></span><span class="op">(</span>Q <span class="op">=</span> <span class="fl">30</span>, k <span class="op">=</span> <span class="fl">2</span>, auc <span class="op">=</span> <span class="fl">0.81</span>, prev <span class="op">=</span> <span class="fl">0.77</span>, r2_nagelkerke <span class="op">=</span> <span class="fl">0.15</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in pmsamplesize(Q = 30, k = 2, auc = 0.81, prev = 0.77, r2_nagelkerke =</span></span>
+<span><span class="co">#&gt; 0.15): Inadequate information to calculate sample size for criterion 2</span></span>
 <span><span class="va">scriteria</span> </span>
-<span><span class="co">#&gt; NB: Assuming 0.1 acceptable difference in apparent &amp; adjusted R-squared</span></span>
+<span><span class="co">#&gt; NB: Assuming 0.05 acceptable difference in apparent &amp; adjusted R-squared</span></span>
 <span><span class="co">#&gt; NB: Assuming 0.05 margin of error in estimation of intercept</span></span>
 <span><span class="co">#&gt; NB: Events per Predictor Parameter assumes prevalance 0.77</span></span>
-<span><span class="co">#&gt;            sample_size shrinkage parameter    CS_Rsq   Max_Rsq   Nag_Rsq</span></span>
-<span><span class="co">#&gt; Criteria 1        1129 0.9000000        30 0.2100957 0.3183689 0.3183689</span></span>
-<span><span class="co">#&gt; Criteria 2        1674 0.8684059        30 0.2100957 0.3183689 0.3183689</span></span>
-<span><span class="co">#&gt; Criteria 3         273 0.8684059        30 0.2100957 0.3183689 0.3183689</span></span>
-<span><span class="co">#&gt; Final             1674 0.8684059        30 0.2100957 0.3183689 0.3183689</span></span>
-<span><span class="co">#&gt;                 EPP</span></span>
-<span><span class="co">#&gt; Criteria 1 28.97767</span></span>
-<span><span class="co">#&gt; Criteria 2 42.96600</span></span>
-<span><span class="co">#&gt; Criteria 3  7.00700</span></span>
-<span><span class="co">#&gt; Final      42.96600</span></span>
-<span><span class="co">#&gt; Minimum sample size required for new model development based on user inputs = 1674,</span></span>
-<span><span class="co">#&gt;  with 1289 events (assuming an outcome prevalence = 0.77) and an EPP = 43</span></span></code></pre></div>
+<span><span class="co">#&gt;            sample_size shrinkage parameter CS_Rsq Max_Rsq Nag_Rsq   EPP</span></span>
+<span><span class="co">#&gt; Criteria 1        1130       0.9        30   0.21      NA    0.15 29.00</span></span>
+<span><span class="co">#&gt; Criteria 3         273       0.9        30   0.21      NA    0.15  7.01</span></span>
+<span><span class="co">#&gt; Final             1130       0.9        30   0.21      NA    0.15 29.00</span></span>
+<span><span class="co">#&gt; Minimum sample size required for new model development based on user inputs = 1130,</span></span>
+<span><span class="co">#&gt;  with 870 events (assuming an outcome prevalence = 0.77) and an EPP = 29</span></span></code></pre></div>
 <p>Three criteria are reported in this example. The criterion targeting
 the difference between the apprarent and optimism adjusted
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>R</mi><mrow><mi>N</mi><mi>a</mi><mi>g</mi><mi>e</mi><mi>l</mi><mi>k</mi><mi>e</mi><mi>r</mi><mi>k</mi><mi>e</mi></mrow><mn>2</mn></msubsup><annotation encoding="application/x-tex">R^2_{Nagelkerke}</annotation></semantics></math>
@@ -162,15 +159,15 @@ using a log-likelihood of a null model:
 where E is the number of outcome. Using the following command, the
 sample criteria could calculate as usual:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/pmsamplesize.html">pmsamplesize</a></span><span class="op">(</span>Q <span class="op">=</span> <span class="fl">24</span>, k <span class="op">=</span> <span class="fl">2</span>, p <span class="op">=</span> <span class="fu">sample.criteria</span><span class="fu">:::</span><span class="fu"><a href="../reference/props_by_events.html">props_by_events</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">138</span> <span class="op">-</span> <span class="fl">24</span>, <span class="fl">24</span><span class="op">)</span><span class="op">)</span>, r2_nagelkerke <span class="op">=</span> <span class="fl">0.48</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/pmsamplesize.html">pmsamplesize</a></span><span class="op">(</span>Q <span class="op">=</span> <span class="fl">24</span>, p <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">138</span> <span class="op">-</span> <span class="fl">24</span>, <span class="fl">24</span><span class="op">)</span>, r2_nagelkerke <span class="op">=</span> <span class="fl">0.48</span><span class="op">)</span></span>
 <span><span class="co">#&gt; NB: Assuming 0.05 acceptable difference in apparent &amp; adjusted R-squared</span></span>
 <span><span class="co">#&gt; NB: Assuming 0.05 margin of error in estimation of intercept</span></span>
 <span><span class="co">#&gt; NB: Events per Predictor Parameter assumes prevalance 0.174</span></span>
-<span><span class="co">#&gt;            sample_size shrinkage parameter CS_Rsq Max_Rsq Nag_Rsq      EPP</span></span>
-<span><span class="co">#&gt; Criteria 1         623 0.9000000        24  0.288     0.6    0.48 4.514493</span></span>
-<span><span class="co">#&gt; Criteria 2         668 0.9056604        24  0.288     0.6    0.48 4.840580</span></span>
-<span><span class="co">#&gt; Criteria 3         221 0.9056604        24  0.288     0.6    0.48 1.601449</span></span>
-<span><span class="co">#&gt; Final              668 0.9056604        24  0.288     0.6    0.48 4.840580</span></span>
+<span><span class="co">#&gt;            sample_size shrinkage parameter CS_Rsq Max_Rsq Nag_Rsq  EPP</span></span>
+<span><span class="co">#&gt; Criteria 1         623     0.900        24  0.288     0.6    0.48 4.51</span></span>
+<span><span class="co">#&gt; Criteria 2         668     0.906        24  0.288     0.6    0.48 4.84</span></span>
+<span><span class="co">#&gt; Criteria 3         221     0.900        24  0.288     0.6    0.48 1.60</span></span>
+<span><span class="co">#&gt; Final              668     0.906        24  0.288     0.6    0.48 4.84</span></span>
 <span><span class="co">#&gt; Minimum sample size required for new model development based on user inputs = 668,</span></span>
 <span><span class="co">#&gt;  with 116 events (assuming an outcome prevalence = 0.174) and an EPP = 4.84</span></span></code></pre></div>
 <p>Here, the <em>p</em> argument must be outcome proportions, denoted as
@@ -201,17 +198,13 @@ will be done internally with a helper function . The Pate’s example in
 his work could be executed with the following demand:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Note the prev argument is not default to NULL</span></span>
-<span><span class="va">events</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2557</span>, <span class="fl">186</span>, <span class="fl">176</span>, <span class="fl">467</span>, <span class="fl">120</span><span class="op">)</span></span>
-<span><span class="va">c_stats</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.85</span>, <span class="fl">0.92</span>, <span class="fl">0.99</span>, <span class="fl">0.95</span>, <span class="fl">0.75</span>, <span class="fl">0.95</span>, <span class="fl">0.87</span>, <span class="fl">0.87</span>, <span class="fl">0.71</span>, <span class="fl">0.82</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">101</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/pmsamplesize.html">pmsamplesize</a></span><span class="op">(</span>Q <span class="op">=</span> <span class="fl">17</span>, k <span class="op">=</span> <span class="fl">5</span>, p <span class="op">=</span> <span class="fu">sample.criteria</span><span class="fu">:::</span><span class="fu"><a href="../reference/props_by_events.html">props_by_events</a></span><span class="op">(</span><span class="va">events</span><span class="op">)</span>, auc <span class="op">=</span> <span class="va">c_stats</span>, prev <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
-<span><span class="co">#&gt; NB: Assuming 0.05 acceptable difference in apparent &amp; adjusted R-squared</span></span>
-<span><span class="co">#&gt; NB: Assuming 0.05 margin of error in estimation of intercept</span></span>
-<span><span class="co">#&gt;            sample_size shrinkage parameter    CS_Rsq   Max_Rsq Nag_Rsq</span></span>
-<span><span class="co">#&gt; Criteria 1       13063      0.90        17 0.1261869 0.8412462    0.15</span></span>
-<span><span class="co">#&gt; Criteria 2        1477      0.75        17 0.1261869 0.8412462    0.15</span></span>
-<span><span class="co">#&gt; Criteria 3         524      0.75        17 0.1261869 0.8412462    0.15</span></span>
-<span><span class="co">#&gt; Final            13063      0.90        17 0.1261869 0.8412462    0.15</span></span></code></pre></div>
+<span><span class="va">a</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/pmsamplesize.html">pmsamplesize</a></span><span class="op">(</span>Q <span class="op">=</span> <span class="fl">17</span>,</span>
+<span>             k <span class="op">=</span> <span class="fl">5</span>,</span>
+<span>             p <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.729</span>, <span class="fl">0.053</span>, <span class="fl">0.05</span>, <span class="fl">0.133</span>, <span class="fl">0.034</span><span class="op">)</span>,</span>
+<span>             r2_nagelkerke <span class="op">=</span> <span class="fl">0.15</span>,</span>
+<span>             shrinkage <span class="op">=</span> <span class="fl">0.9</span>,</span>
+<span>             auc <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.85</span>, <span class="fl">0.92</span>, <span class="fl">0.99</span>, <span class="fl">0.95</span>, <span class="fl">0.75</span>, <span class="fl">0.95</span>, <span class="fl">0.87</span>, <span class="fl">0.87</span>, <span class="fl">0.71</span>, <span class="fl">0.82</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>Conclusion Through the illustrations above, package can easily
 calculate pre-defined sample criteria for future modelling given what
 kind of information is reported in various studies.</p>
@@ -224,7 +217,7 @@ kind of information is reported in various studies.</p>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by First Last.</p>
+  <p>Developed by Jingwen Sun.</p>
 </div>
 
 <div class="pkgdown-footer-right">
