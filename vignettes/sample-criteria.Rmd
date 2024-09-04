@@ -55,7 +55,7 @@ Here, the \code{R2.coxsnell} can be directly used for calculating sample criteri
 
 ```{r}
 set.seed(1234)
-scriteria <- pmsamplesize(Q = 30, k = 2, auc = 0.81, prev = 0.77, sigma = 0.1)
+scriteria <- pmsamplesize(Q = 30, k = 2, auc = 0.81, prev = 0.77, r2_nagelkerke = 0.15)
 scriteria 
 ```
 
@@ -65,7 +65,7 @@ Three criteria are reported in this example. The criterion targeting the differe
 Event prevalences are observed more than often. We could use this information to calculate the apparent Cox-Snell $R^2$ using a log-likelihood of a null model: $$lnLR_{null}=Eln{\frac{E}{n}}+(n-E)ln{1-\frac{E}{n}}$$ where E is the number of outcome. Using the following command, the sample criteria could calculate as usual: 
 
 ```{r}
-pmsamplesize(Q = 24, k = 2, p = sample.criteria:::props_by_events(c(138 - 24, 24)), r2_nagelkerke = 0.48)
+pmsamplesize(Q = 24, p = c(138 - 24, 24), r2_nagelkerke = 0.48)
 ```
 
 Here, the *p* argument must be outcome proportions, denoted as $p_{k}$. By defailt, the first element in the vector is the $Y=0$ group (benign) group. We could use the helper function \code{props_by_events} to the return outcome proportions by taking the number of events in different groups. Here, the result reported the minimum sample size should be 668 under criterion 2.
@@ -76,10 +76,13 @@ To calculate the criterion 1 minimum sample size, we need the cohort $R^2_{CS\_a
  
 ```{r}
 # Note the prev argument is not default to NULL
-events <- c(2557, 186, 176, 467, 120)
-c_stats <- c(0.85, 0.92, 0.99, 0.95, 0.75, 0.95, 0.87, 0.87, 0.71, 0.82)
 set.seed(101)
-pmsamplesize(Q = 17, k = 5, p = sample.criteria:::props_by_events(events), auc = c_stats, prev = NULL)
+a <- pmsamplesize(Q = 17,
+             k = 5,
+             p = c(0.729, 0.053, 0.05, 0.133, 0.034),
+             r2_nagelkerke = 0.15,
+             shrinkage = 0.9,
+             auc = c(0.85, 0.92, 0.99, 0.95, 0.75, 0.95, 0.87, 0.87, 0.71, 0.82))
 ```
  
 
