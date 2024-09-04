@@ -16,7 +16,7 @@
 #' using \code{rms} package. It returns a list containing the \eqn{R^2_{CS}} and \eqn{R^2_{Nagelkerke}}
 #'
 #' * While for multinomial models, A Bernoulli simulation is used, based on
-#' \insertCite{pmsamplesize}{sample.criteria}.
+#' \insertCite{r2-approx}{sample.criteria}
 #' @export
 #'
 #' @examples

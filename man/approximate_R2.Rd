@@ -20,7 +20,7 @@ approximate_R2(k, auc, prev, n = 1e+06)
 \item For binary outcome, approximate_R2() bases on \insertCite{r2-approx}{sample.criteria}
 using \code{rms} package. It returns a list containing the \eqn{R^2_{CS}} and \eqn{R^2_{Nagelkerke}}
 \item While for multinomial models, A Bernoulli simulation is used, based on
-\insertCite{pmsamplesize}{sample.criteria}.
+\insertCite{r2-approx}{sample.criteria}
 }
 }
 \description{
