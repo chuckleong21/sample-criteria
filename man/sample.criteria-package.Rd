@@ -6,7 +6,7 @@
 \alias{sample.criteria-package}
 \title{sample.criteria: Criteria-based minimum sample size for multinomial logistic models}
 \description{
-The package facilitate to derive minimum sample size for both binary and multinomial logistic models in clinic studies based on three criteria. 1) fixed shrinkage rate based 2) adjusted shrinkage rate by tolerate rate in models based and 3) Overall risk restrainted by margin error of distribution
+The package facilitate to derive minimum sample size for both binary and multinomial logistic models in clinic studies based on three criteria. 1) fixed shrinkage rate based 2) adjusted shrinkage rate by tolerate rate in models based and 3) Overall risk restrainted by margin error of distribution.
 }
 \seealso{
 Useful links:
