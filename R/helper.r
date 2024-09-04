@@ -1,12 +1,3 @@
-#' Calculate proportions of group k relative to reference group r
-#'
-#' @param n_events Event counts in group k and r
-#'
-#' @return A vector that has length of \eqn{C^k_{2}}
-#' @export
-#'
-#' @examples
-#' phi_pairs(c(2557, 186, 176, 467, 120))
 phi_pairs <- function(n_events) {
   K <- length(n_events)
   x <- Reduce(c, sapply(seq_len(K-1), function(i) n_events[-seq_len(i)]))
@@ -14,17 +5,6 @@ phi_pairs <- function(n_events) {
   x / (x + y)
 }
 
-#' Calculate (cohort) outcome proportions
-#'
-#' @param x The count of events of different outcomes
-#'
-#' @return
-#' A numeric vector of length \eqn{k + C^{k}_{2}} where the first k elements are
-#' \eqn{p_k} and the rest are \eqn{p_{k,r}}
-#' @export
-#'
-#' @examples
-#' props_by_events(c(2557, 186, 176, 467, 120))
 props_by_events <- function(x) {
   p <- c(x / sum(x),
          colSums(combn(x, 2)) / sum(x))
