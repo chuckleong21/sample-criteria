@@ -4,19 +4,20 @@
 \name{sample.criteria-package}
 \alias{sample.criteria}
 \alias{sample.criteria-package}
-\title{sample.criteria: What the Package Does (One Line, Title Case)}
+\title{sample.criteria: Criteria-based minimum sample size for multinomial logistic models}
 \description{
-What the package does (one paragraph).
+The package facilitate to derive minimum sample size for both binary and multinomial logistic models in clinic studies based on three criteria. 1) fixed shrinkage rate based 2) adjusted shrinkage rate by tolerate rate in models based and 3) Overall risk restrainted by margin error of distribution
 }
 \seealso{
 Useful links:
 \itemize{
+  \item \url{https://github.com/jingwen517/sample-criteria.git}
   \item \url{https://chuckleong21.github.io/sample-criteria/}
 }
 
 }
 \author{
-\strong{Maintainer}: First Last \email{first.last@example.com} (\href{https://orcid.org/YOUR-ORCID-ID}{ORCID})
+\strong{Maintainer}: Jingwen Sun \email{jingwen7841@gmail.com}
 
 }
 \keyword{internal}

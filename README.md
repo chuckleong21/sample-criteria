@@ -1,5 +1,9 @@
+<!-- badges: start -->
+  [![Codecov test coverage](https://codecov.io/gh/chuckleong21/sample-criteria/graph/badge.svg)](https://app.codecov.io/gh/chuckleong21/sample-criteria)
+  <!-- badges: end -->
+
 # sample.criteria
-The goal of \code{sample.criteria} is to calculate the minimum sample size based on reported clinic prediction models for future work.
+The goal of `sample.criteria` is to calculate the minimum sample size based on reported clinic prediction models for future work.
 
 ## Installaion
 The package is not on CRAN, install it through github:
