@@ -1,0 +1,91 @@
+---
+title: "sample-criteria"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{sample-criteria}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(sample.criteria)
+```
+
+# Introduction
+
+The `pmsampsize` package provides tools for determining the minimum sample size required when developing a prediction model. In this vignette, we'll explore how to use the `pmsampsize` function.
+
+## Installation
+
+You can install the `sample.criteria` package from Github using the following command:
+
+```{r}
+# remotes::install_github("your.name/your.repository")
+```
+
+Usage
+This package has two main functions: **pmsamplesize()** and **approximate_R2()**. pmsamplesize calculates the sample criteria defined by Riley (2018) for binary outcome logistic regression models, and extended by Pate (2023) for multinomial outcome logistic regression model. Here three kinds of usage will be illustrated: 
+
+1. You have a binary outcome model but only C statistics and outcome proportion are reported;
+2. You have a binary outcome model but no $R^2_{CS}$ is reported; 
+3. You have a multinomial outcome model but for distinct cohort models no $R^2_{CS\_adj,k,r}$ are reported.
+
+## Case 1: Only C statistics is reported
+In clinical studies, Cox-Snell $R^2$ often has the following issues: 
+- The Cox-Snell R-squared is often criticized for its lack of interpretability and its sensitivity to censoring (when some event times are unknown due to follow-up truncation).
+- It does not consider the actual distribution of survival times or the shape of the hazard function.
+- Additionally, it assumes that the proportional hazards assumption holds, which may not always be the case.
+
+We can then appropriate $R^2_{CS}$ using the C statistics and event prevalence (outcome proportion). The steps are detailed in [here](https://onlinelibrary.wiley.com/doi/epdf/10.1002/sim.8806) by Riley. We can execute the simulation 
+with the following command: 
+
+```{r}
+library(sample.criteria)
+# Noted here that k = 2 for binary outcomes
+approximate_R2(k = 2, auc = 0.81, prev = 0.77)
+```
+Here, the \code{R2.coxsnell} can be directly used for calculating sample criteria since it is gotten from another dataset. Assuming the new model aimed to consider up to 30 predictor parameters, applying the sample size criteria of Riley et al. Using pmsamplesize() then we should have a minimum sample size of 1129:
+
+```{r}
+set.seed(1234)
+scriteria <- pmsamplesize(Q = 30, k = 2, auc = 0.81, prev = 0.77, r2_nagelkerke = 0.15)
+scriteria 
+```
+
+Three criteria are reported in this example. The criterion targeting the difference between the apprarent and optimism adjusted $R^2_{Nagelkerke}$ to be $\delta{}=0.05$ has a larger example for modeling in the future.
+
+## Case 2: When No Cox-Snell $R^2$ is reported
+Event prevalences are observed more than often. We could use this information to calculate the apparent Cox-Snell $R^2$ using a log-likelihood of a null model: $$lnLR_{null}=Eln{\frac{E}{n}}+(n-E)ln{1-\frac{E}{n}}$$ where E is the number of outcome. Using the following command, the sample criteria could calculate as usual: 
+
+```{r}
+pmsamplesize(Q = 24, p = c(138 - 24, 24), r2_nagelkerke = 0.48)
+```
+
+Here, the *p* argument must be outcome proportions, denoted as $p_{k}$. By defailt, the first element in the vector is the $Y=0$ group (benign) group. We could use the helper function \code{props_by_events} to the return outcome proportions by taking the number of events in different groups. Here, the result reported the minimum sample size should be 668 under criterion 2.
+
+## Case 3: Cohort Cox-Snell $R^2_{CS\_adj,k,r}$ approximation with C statistics
+To calculate the criterion 1 minimum sample size, we need the cohort $R^2_{CS\_adj,k,r}$ information, which sometimes are not reported in studies. We can the approximate them using the simulation approach put forward by Riley et al. Estimates of the pairwise outcome proportions $\phi_{k,r}$ of category k relative to the reference category r are also
+ required to implement the simulation approach. One can supply the $\phi_{k,r}$ value to argument \code{prev}, but it could also be left blank and the calculation will be done internally with a helper function \code{phi_pairs}. The Pate's example in his work could be executed with the following demand: 
+ 
+```{r}
+# Note the prev argument is not default to NULL
+set.seed(101)
+a <- pmsamplesize(Q = 17,
+             k = 5,
+             p = c(0.729, 0.053, 0.05, 0.133, 0.034),
+             r2_nagelkerke = 0.15,
+             shrinkage = 0.9,
+             auc = c(0.85, 0.92, 0.99, 0.95, 0.75, 0.95, 0.87, 0.87, 0.71, 0.82))
+```
+ 
+
+
+Conclusion
+Through the illustrations above, \code{sample.criteria} package can easily calculate pre-defined sample criteria for future modelling given what kind of information is reported in various studies.
