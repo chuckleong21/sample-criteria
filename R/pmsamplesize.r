@@ -1,5 +1,5 @@
 #' @exportS3Method base::print
-print.pmsample <- function(x, ...) {
+print.pmsample <- function(x, ...) { # nocov start
   message(paste("NB: Assuming", x$sigma, "acceptable difference in apparent & adjusted R-squared"))
   message(paste("NB: Assuming", x$margin_error, "margin of error in estimation of intercept"))
   message(paste("NB: Events per Predictor Parameter assumes prevalance", round(x$prev, 3), "\n"))
@@ -9,14 +9,14 @@ print.pmsample <- function(x, ...) {
               x$final$sample_size,
               x$final$sample_size * x$prev,
               x$prev, x$final$EPP))
-}
+} # nocov end
 
 #' @exportS3Method base::print
-print.pmsample_multi <- function(x, ...) {
+print.pmsample_multi <- function(x, ...) { # nocov start
   message(paste("NB: Assuming", x$sigma, "acceptable difference in apparent & adjusted R-squared"))
   message(paste("NB: Assuming", x$margin_error, "margin of error in estimation of intercept"))
   print(x$criteria)
-}
+} # nocov end
 
 
 #' Sample Criteria Extension for Multinomial Regression
@@ -198,6 +198,18 @@ pmsamplesize <- function(Q, k, p, adjust = FALSE,
         if(is.null(prev)) {
           prev <- pk[Reduce(c, sapply(seq_along(pk), function(i) seq_along(pk)[-seq_len(i)]))] / pkr
         }
+
+        # throws an error if auc or prev is not the length of ncol(combn(p, 2))
+        if(length(auc) != ncol(combn(pk, 2))) {
+          stop(sprintf('"auc" expects length of %g, but got %g',
+                       ncol(combn(p, 2)), length(auc)))
+        }
+
+        if(length(prev) != ncol(combn(pk, 2))) {
+          stop(sprintf('"prev" expects length of %g, but got %g',
+                       ncol(combn(p, 2)), length(prev)))
+        }
+
         r2_cs_adj_kr <- mapply(approximate_R2, k = k, auc = auc, prev = prev)
       } else {
         if(length(r2_cs_app) != ncol(combn(p, 2))) {
