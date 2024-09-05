@@ -384,10 +384,10 @@ by Riley. We can execute the simulation with the following command:</p>
 <span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="co"># Noted here that k = 2 for binary outcomes</span></span>
 <span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="fu">approximate_R2</span>(<span class="at">k =</span> <span class="dv">2</span>, <span class="at">auc =</span> <span class="fl">0.81</span>, <span class="at">prev =</span> <span class="fl">0.77</span>)</span>
 <span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a><span class="co">#&gt; $R2.nagelkerke</span></span>
-<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a><span class="co">#&gt; [1] 0.3225301</span></span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a><span class="co">#&gt; [1] 0.3206943</span></span>
 <span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a><span class="co">#&gt; $R2.coxsnell</span></span>
-<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a><span class="co">#&gt; [1] 0.2128417</span></span></code></pre></div>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a><span class="co">#&gt; [1] 0.2116302</span></span></code></pre></div>
 <p>Here, the can be directly used for calculating sample criteria since
 it is gotten from another dataset. Assuming the new model aimed to
 consider up to 30 predictor parameters, applying the sample size
@@ -459,10 +459,13 @@ executed with the following demand:</p>
 <span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>             <span class="at">r2_nagelkerke =</span> <span class="fl">0.15</span>,</span>
 <span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a>             <span class="at">shrinkage =</span> <span class="fl">0.9</span>,</span>
 <span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a>             <span class="at">auc =</span> <span class="fu">c</span>(<span class="fl">0.85</span>, <span class="fl">0.92</span>, <span class="fl">0.99</span>, <span class="fl">0.95</span>, <span class="fl">0.75</span>, <span class="fl">0.95</span>, <span class="fl">0.87</span>, <span class="fl">0.87</span>, <span class="fl">0.71</span>, <span class="fl">0.82</span>))</span></code></pre></div>
-<p>Conclusion Through the illustrations above, package can easily
-calculate pre-defined sample criteria for future modelling given what
-kind of information is reported in various studies.</p>
 </div>
+</div>
+<div id="conclusion" class="section level1">
+<h1>Conclusion</h1>
+<p>Through the illustrations above, package can easily calculate
+pre-defined sample criteria for future modelling given what kind of
+information is reported in various studies.</p>
 </div>
 
 

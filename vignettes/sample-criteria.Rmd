@@ -87,5 +87,5 @@ a <- pmsamplesize(Q = 17,
  
 
 
-Conclusion
+# Conclusion
 Through the illustrations above, \code{sample.criteria} package can easily calculate pre-defined sample criteria for future modelling given what kind of information is reported in various studies.

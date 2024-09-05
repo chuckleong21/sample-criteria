@@ -1,7 +1,11 @@
+test_that("Valid k argument", {
+  expect_error(pmsamplesize(Q = 30, k = 1, auc = 0.81, prev = 0.77))
+})
+
 test_that("Only C statistics & outcome proportion are reported", {
   set.seed(1234)
   s <- suppressWarnings(pmsamplesize(Q = 30, k = 2, r2_nagelkerke = 0.15,
-                    auc = 0.81, prev = 0.77))
+                                     auc = 0.81, prev = 0.77))
   expect_equal(s$final$sample_size, 1130)
 })
 
@@ -14,21 +18,64 @@ test_that("When R2_CS is not reported", {
 test_that("Inadequate information error", {
   # sample size can't be calculated since neither E, n are known
   expect_error(pmsamplesize(Q = 24, p = c(0.826, 0.174), r2_nagelkerke = 0.48))
-  v <- suppressWarnings(
-    pmsamplesize(Q = 24, k = 2, r2_cs_app = 0.288, prev = 0.174, r2_nagelkerke = 0.48)
-  )
-  vv <- suppressWarnings(
-    pmsamplesize(Q = 24, k = 2, r2_cs_app = 0.288, r2_nagelkerke = 0.48)
-  )
-  # Only criterion 1 is calculated
-  expect_equal(rownames(vv$criteria)[-nrow(vv$criteria)], "Criteria 1")
-  # Only criterion 1 & 3 are calculated
-  expect_equal(rownames(v$criteria)[-nrow(v$criteria)], c("Criteria 1", "Criteria 3"))
+
 })
 
 test_that("Only a certain criteria is calculated", {
+  # EPP is unable to be calculated for no prevalance information
   s <- suppressWarnings(pmsamplesize(Q = 24, k = 2, r2_cs_app = 0.288, r2_nagelkerke = 0.48))
+  # Only criterion 1 is calculated
+  v <- suppressWarnings(
+    pmsamplesize(Q = 24, k = 2, r2_cs_app = 0.288, prev = 0.174, r2_nagelkerke = 0.48)
+  )
+  vvv <- suppressWarnings(
+    pmsamplesize(Q = 24, k = 2, r2_cs_adj = 0.288, r2_nagelkerke = 0.48)
+  )
+  # Only criterion 1 & 3 are calculated
+  vv <- suppressWarnings(
+    pmsamplesize(Q = 24, k = 2, r2_cs_app = 0.288, r2_nagelkerke = 0.48)
+  )
+  expect_equal(rownames(vvv$criteria)[-nrow(vvv$criteria)], "Criteria 1")
+  expect_equal(rownames(vv$criteria)[-nrow(vv$criteria)], "Criteria 1")
+  expect_equal(rownames(v$criteria)[-nrow(v$criteria)], c("Criteria 1", "Criteria 3"))
   expect_equal(s$final$sample_size, 623)
+})
+
+test_that("Valid amount of r2_cs, auc & prev", {
+  expect_error(
+    pmsamplesize(Q = 17,
+                 k = 5,
+                 p = c(2557, 186, 176, 467, 120),
+                 r2_cs_app = c(0.391, 0.38, 0.306, 0.75, 0.697, 0.738, 0.691, 0.741, 0.637),
+                 r2_nagelkerke = 0.15,
+                 shrinkage = 0.9)
+  )
+  expect_error(
+    pmsamplesize(Q = 17,
+                 k = 5,
+                 p = c(2557, 186, 176, 467, 120),
+                 r2_cs_adj = c(0.116, 0.179, 0.497, 0.170, 0.499, 0.374, 0.328, 0.129, 0.210),
+                 r2_nagelkerke = 0.15,
+                 shrinkage = 0.9)
+  )
+
+  expect_error(
+    pmsamplesize(Q = 17,
+                 k = 5,
+                 p = c(0.729, 0.053, 0.05, 0.133, 0.034),
+                 r2_nagelkerke = 0.15,
+                 shrinkage = 0.9,
+                 auc = c(0.85, 0.92, 0.99, 0.95, 0.95, 0.87, 0.87, 0.71, 0.82))
+  )
+  expect_error(
+    pmsamplesize(Q = 17,
+                 k = 5,
+                 p = c(0.729, 0.053, 0.05, 0.133, 0.034),
+                 r2_nagelkerke = 0.15,
+                 shrinkage = 0.9,
+                 auc = c(0.85, 0.92, 0.99, 0.95, 0.75, 0.95, 0.87, 0.87, 0.71, 0.82),
+                 prev = c(0.064, 0.154, 0.045, 0.485, 0.715, 0.391, 0.727, 0.405, 0.204))
+  )
 })
 
 test_that("Results are different based on the information type of p", {
