@@ -9,7 +9,7 @@ The goal of `sample.criteria` is to calculate the minimum sample size based on r
 The package is not on CRAN, install it through github:
 
 ```r
-remotes::install_github("your.name/your.repository")
+remotes::install_github("jingwen517/sample-criteria")
 ```
 
 ## Usage 
