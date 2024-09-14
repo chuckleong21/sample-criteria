@@ -228,7 +228,8 @@ pmsamplesize <- function(Q, k, p, adjust = FALSE,
 
     r2_cs_app <- 1 - prod(pk^pk)^2; r2_cs_adj <- r2_nagelkerke * r2_cs_app
     shrinkage_crit2 <- r2_cs_adj / (r2_cs_adj + sigma * r2_cs_app)
-    crit2 <- ceiling(((k-1)*Q) / (shrinkage_crit2-1) * log(1-r2_cs_adj-sigma*r2_cs_app))
+    browser()
+    crit2 <- ceiling(((k-1)*Q) / (shrinkage_crit2-1) / log(1-r2_cs_adj-sigma*r2_cs_app))
 
     crit3 <- ceiling(max(qchisq(0.05/k, 1, lower.tail = FALSE)*pk*(1-pk) / sigma^2))
 
