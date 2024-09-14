@@ -2,3 +2,5 @@
 .pdf
 docs
 /Meta/
+.DS_Store
+.Rhistory
