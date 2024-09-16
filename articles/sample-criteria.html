@@ -131,36 +131,47 @@ a rounded prevalance is given to the <code>p</code> argument in
 <code><a href="../reference/pmsamplesize.html">pmsamplesize()</a></code> function compared to just event outcomes.
 The following is a flowchart of
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>R</mi><mrow><mi>C</mi><mi>S</mi><mo>,</mo><mi>a</mi><mi>d</mi><mi>j</mi><mo>,</mo><mi>k</mi><mo>,</mo><mi>r</mi></mrow><mn>2</mn></msubsup><annotation encoding="application/x-tex">R^2_{CS,adj,k,r}</annotation></semantics></math>
-derivation: <img src="r2_derivation.png" alt="img "></p>
+derivation:</p>
+<div class="figure">
+<img src="r2_derivation.png" alt="R2 derivation" width="80%" height="80%"><p class="caption">
+R2 derivation
+</p>
+</div>
 <div class="section level4">
 <h4 id="case-1-only-c-statistics-is-reported">Case 1: Only C statistics is reported<a class="anchor" aria-label="anchor" href="#case-1-only-c-statistics-is-reported"></a>
 </h4>
 <p>In clinical studies, Cox-Snell
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>R</mi><mn>2</mn></msup><annotation encoding="application/x-tex">R^2</annotation></semantics></math>
-often has the following issues: - The Cox-Snell R-squared is often
-criticized for its lack of interpretability and its sensitivity to
-censoring (when some event times are unknown due to follow-up
-truncation). - It does not consider the actual distribution of survival
-times or the shape of the hazard function. - Additionally, it assumes
-that the proportional hazards assumption holds, which may not always be
-the case.</p>
+often has the following issues:</p>
+<ul>
+<li>The Cox-Snell R-squared is often criticized for its lack of
+interpretability and its sensitivity to censoring (when some event times
+are unknown due to follow-up truncation).</li>
+<li>It does not consider the actual distribution of survival times or
+the shape of the hazard function.</li>
+<li>Additionally, it assumes that the proportional hazards assumption
+holds, which may not always be the case.</li>
+</ul>
 <p>We can then appropriate
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>R</mi><mrow><mi>C</mi><mi>S</mi></mrow><mn>2</mn></msubsup><annotation encoding="application/x-tex">R^2_{CS}</annotation></semantics></math>
 using the C statistics and event prevalence (outcome proportion). The
 steps are detailed in <a href="https://github.com/alexpate30/MRC-multi-outcome/blob/394a236a83df524074197d9dc194fdafe96aad9c/Project%208%20Multinomial%20Sample%20Size/code/p3.1%20worked%20example.R#L142" class="external-link">Github</a>.
 We can execute the simulation with the following command:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/mapply.html" class="external-link">mapply</a></span><span class="op">(</span><span class="va">approximate_R2</span>, </span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">101</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/mapply.html" class="external-link">mapply</a></span><span class="op">(</span><span class="va">approximate_R2</span>, </span>
 <span>       k <span class="op">=</span> <span class="fl">5</span>, </span>
 <span>       auc <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.85</span>, <span class="fl">0.92</span>, <span class="fl">0.99</span>, <span class="fl">0.95</span>, <span class="fl">0.75</span>, <span class="fl">0.95</span>, <span class="fl">0.87</span>, <span class="fl">0.87</span>, <span class="fl">0.71</span>, <span class="fl">0.82</span><span class="op">)</span>, </span>
 <span>       prev <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.729</span>, <span class="fl">0.053</span>, <span class="fl">0.05</span>, <span class="fl">0.133</span>, <span class="fl">0.034</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;  [1] 0.29244451 0.15518314 0.26344018 0.35075416 0.02855554 0.49077301</span></span>
-<span><span class="co">#&gt;  [7] 0.10914308 0.10363603 0.06578732 0.05131871</span></span></code></pre></div>
+<span><span class="co">#&gt;  [1] 0.29439854 0.15435216 0.26227726 0.35219081 0.02858901 0.49086766</span></span>
+<span><span class="co">#&gt;  [7] 0.10912363 0.10410317 0.06626235 0.05093480</span></span></code></pre></div>
 <p>Here, the
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>R</mi><mrow><mi>C</mi><mi>S</mi></mrow><mn>2</mn></msubsup><annotation encoding="application/x-tex">R^2_{CS}</annotation></semantics></math>
 can be directly used for calculating sample criteria since it is gotten
 from another dataset. <code>adjust = TRUE</code> argument in
-<code>pmsamplesize</code> allows a user to use <span class="math inline">$R^2_{CS,adj$</span> adjusted to amount of
+<code>pmsamplesize</code> allows a user to use
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>R</mi><mrow><mi>C</mi><mi>S</mi><mo>,</mo><mi>a</mi><mi>d</mi><mi>j</mi></mrow><mn>2</mn></msubsup><annotation encoding="application/x-tex">R^2_{CS,adj}</annotation></semantics></math>
+adjusted to amount of
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>R</mi><mrow><mi>N</mi><mi>a</mi><mi>g</mi><mi>e</mi><mi>l</mi><mi>k</mi><mi>e</mi><mi>r</mi><mi>k</mi><mi>e</mi></mrow><mn>2</mn></msubsup><annotation encoding="application/x-tex">R^2_{Nagelkerke}</annotation></semantics></math>.
 Assuming the new model aimed to consider up to 17 predictor parameters,
 applying the sample size criteria of Riley et al. Using pmsamplesize()
@@ -197,7 +208,7 @@ derive
 by the approach suggested by <span class="citation">Riley et al.
 (2020)</span>. (Referred as
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>φ</mi><mrow><mi>k</mi><mo>,</mo><mi>r</mi></mrow></msub><annotation encoding="application/x-tex">\varphi_{k,r}</annotation></semantics></math>
-approach in figure ) In the literature,
+approach in figure above) In the literature,
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>φ</mi><mrow><mi>k</mi><mo>,</mo><mi>r</mi></mrow></msub><mo>=</mo><mfrac><msub><mi>E</mi><mi>k</mi></msub><mrow><msub><mi>E</mi><mi>k</mi></msub><mo>+</mo><msub><mi>E</mi><mi>r</mi></msub></mrow></mfrac></mrow><annotation encoding="application/x-tex">\varphi_{k,r}=\frac{E_k}{E_k+E_r}</annotation></semantics></math>
 is defined as outcome proportion in the category k relative to the
 reference category r. Then for each distinct logistic regression model
