@@ -1,4 +1,4 @@
 url: https://chuckleong21.github.io/sample-criteria/
 template:
   bootstrap: 5
-
+  assets: vignettes/

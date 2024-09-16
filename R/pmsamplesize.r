@@ -134,7 +134,7 @@ pmsamplesize <- function(Q, k, p, adjust = FALSE,
     r2_cs_adj <- ifelse(adjust, r2_cs_adj, r2_cs_app)
 
     ### criterion 1: baseline on shrinkage = 0.9
-    crit1 <- ceiling(Q / ((shrinkage - 1) / log(1 - r2_cs_adj/shrinkage)))
+    crit1 <- ceiling(Q / ((shrinkage - 1) * log(1 - r2_cs_adj/shrinkage)))
     ### criterion 2: baseline on adjusted shrinkage
     ### by absolute difference in proportions of variance explained
     if(!exists("available_crit2")) {
@@ -198,8 +198,16 @@ pmsamplesize <- function(Q, k, p, adjust = FALSE,
     }
 
     if(!is.null(r2_cs_adj)) {
-      r2_cs_adjkr <- r2_cs_adj
+      if(length(r2_cs_adj) != ncol(combn(pk, 2))) {
+        stop(sprintf('"r2_cs_adj" expects length of %g, but got %g',
+                     ncol(combn(p, 2)), length(r2_cs_adj)))
+      }
+      r2_cs_adj_kr <- r2_cs_adj
     } else if(!is.null(r2_cs_app)) {
+      if(length(r2_cs_app) != ncol(combn(pk, 2))) {
+        stop(sprintf('"r2_cs_app" expects length of %g, but got %g',
+                     ncol(combn(p, 2)), length(r2_cs_app)))
+      }
       if(!adjust) {
         r2_cs_adj_kr <- r2_cs_app
       } else {
