@@ -7,29 +7,43 @@ knitr::opts_chunk$set(
 ## ----setup--------------------------------------------------------------------
 library(sample.criteria)
 
-## -----------------------------------------------------------------------------
-# remotes::install_github("your.name/your.repository")
+## ----install------------------------------------------------------------------
+# remotes::install_github("jingwen517/sample-criteria")
+# library(sample.criteria)
 
-## -----------------------------------------------------------------------------
-library(sample.criteria)
-# Noted here that k = 2 for binary outcomes
-approximate_R2(k = 2, auc = 0.81, prev = 0.77)
+## ----figure, echo =FALSE, fig.cap="R2 derivation", out.width="80%", out.height="80%"----
+knitr::raw_html("https://raw.githubusercontent.com/chuckleong21/sample-criteria/main/vignettes/r2_derivation.png")
 
-## -----------------------------------------------------------------------------
-set.seed(1234)
-scriteria <- pmsamplesize(Q = 30, k = 2, auc = 0.81, prev = 0.77, r2_nagelkerke = 0.15)
+## ----simulation---------------------------------------------------------------
+set.seed(101)
+mapply(approximate_R2, 
+       k = 5, 
+       auc = c(0.85, 0.92, 0.99, 0.95, 0.75, 0.95, 0.87, 0.87, 0.71, 0.82), 
+       prev = c(0.729, 0.053, 0.05, 0.133, 0.034))
+
+## ----case 1-------------------------------------------------------------------
+set.seed(101)
+scriteria <- pmsamplesize(Q = 17, 
+                          k = 5, 
+                          p = c(0.729, 0.053, 0.05, 0.133, 0.034),
+                          auc = c(0.85, 0.92, 0.99, 0.95, 0.75, 0.95, 0.87, 0.87, 0.71, 0.82))
 scriteria 
 
-## -----------------------------------------------------------------------------
-pmsamplesize(Q = 24, p = c(138 - 24, 24), r2_nagelkerke = 0.48)
+## ----case 2-------------------------------------------------------------------
+bcriteria <- pmsamplesize(Q = 17,
+                  k = 5,
+                  p = c(2557, 186, 176, 467, 120),
+                  r2_nagelkerke = 0.15,
+                  shrinkage = 0.9)
+bcriteria
 
-## -----------------------------------------------------------------------------
-# Note the prev argument is not default to NULL
+## ----case 3-------------------------------------------------------------------
 set.seed(101)
-a <- pmsamplesize(Q = 17,
-             k = 5,
-             p = c(0.729, 0.053, 0.05, 0.133, 0.034),
-             r2_nagelkerke = 0.15,
-             shrinkage = 0.9,
-             auc = c(0.85, 0.92, 0.99, 0.95, 0.75, 0.95, 0.87, 0.87, 0.71, 0.82))
+acriteria <- pmsamplesize(Q = 17,
+                  k = 5,
+                  p = c(2557, 186, 176, 467, 120),
+                  r2_nagelkerke = 0.15,
+                  shrinkage = 0.9,
+                  auc = c(0.85, 0.92, 0.99, 0.95, 0.75, 0.95, 0.87, 0.87, 0.71, 0.82))
+acriteria
 
