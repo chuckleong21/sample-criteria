@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">sample.criteria</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9562</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9624</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -51,7 +51,10 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>sample-criteria</h1>
+                        <h4 data-toc-skip class="author">Sun
+JingWen</h4>
             
+            <h4 data-toc-skip class="date">2024-09-16</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jingwen517/sample-criteria.git/blob/main/vignettes/sample-criteria.Rmd" class="external-link"><code>vignettes/sample-criteria.Rmd</code></a></small>
       <div class="d-none name"><code>sample-criteria.Rmd</code></div>
@@ -62,40 +65,76 @@
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jingwen517/sample-criteria.git" class="external-link">sample.criteria</a></span><span class="op">)</span></span></code></pre></div>
 <div class="section level2">
+<h2 id="background">Background<a class="anchor" aria-label="anchor" href="#background"></a>
+</h2>
+<p>Clinical prediction models (CPMs) are often developed using logistic
+regression to predict binary health outcomes. However, they can also be
+developed using multinomial logistic regression for outcomes with
+multiple levels, such as cancer grade or Likert scales. Multinomial
+models have been effective in various clinical settings, and some argue
+that they should be used more often. It’s important to ensure the sample
+size of the development dataset is adequate to minimize overfitting and
+provide precise predictions. <span class="citation">Pate et al.
+(2023)</span> proposes to extend the existing sample criteria defined by
+<span class="citation">Riley et al. (2020)</span>.</p>
+</div>
+<div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
-<p>The <code>pmsampsize</code> package provides tools for determining
-the minimum sample size required when developing a prediction model. In
-this vignette, we’ll explore how to use the <code>pmsampsize</code>
-function.</p>
+<p><span class="citation">Ensor (2018)</span> wrote a package for
+calculating the sample criteria based on the implementation in Stata.
+The package <code>sample.criteria</code> basically extends the current
+framework of binary logistic regression models into multinomial ones for
+determining the minimum sample size required when developing a
+prediction model. However,calculating these different criteria are
+dependent on the information reported by the model.</p>
+<ul>
+<li>
+<span class="citation">Riley et al. (2019)</span> uses event
+outcomes;</li>
+<li>
+<span class="citation">Riley, Van Calster, and Collins (2021)</span>
+uses a prevalance and a C-statistics;</li>
+<li>
+<span class="citation">Pate et al. (2023)</span> uses prevalances
+and pairwise C-statistics.</li>
+</ul>
+<p>In this vignette, we’ll explore how <code>pmsampsize()</code>
+function deals the situation properly.</p>
 <div class="section level3">
 <h3 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h3>
 <p>You can install the <code>sample.criteria</code> package from Github
 using the following command:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># remotes::install_github("your.name/your.repository")</span></span></code></pre></div>
-<p>Usage This package has two main functions:
-<strong>pmsamplesize()</strong> and <strong>approximate_R2()</strong>.
-pmsamplesize calculates the sample criteria defined by Riley (2018) for
-binary outcome logistic regression models, and extended by Pate (2023)
-for multinomial outcome logistic regression model. Here three kinds of
-usage will be illustrated:</p>
-<ol style="list-style-type: decimal">
-<li>You have a binary outcome model but only C statistics and outcome
-proportion are reported;</li>
-<li>You have a binary outcome model but no
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>R</mi><mrow><mi>C</mi><mi>S</mi></mrow><mn>2</mn></msubsup><annotation encoding="application/x-tex">R^2_{CS}</annotation></semantics></math>
-is reported;</li>
-<li>You have a multinomial outcome model but for distinct cohort models
-no
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>R</mi><mrow><mi>C</mi><mi>S</mi><mi>_</mi><mi>a</mi><mi>d</mi><mi>j</mi><mo>,</mo><mi>k</mi><mo>,</mo><mi>r</mi></mrow><mn>2</mn></msubsup><annotation encoding="application/x-tex">R^2_{CS\_adj,k,r}</annotation></semantics></math>
-are reported.</li>
-</ol>
+<code class="sourceCode R"><span><span class="co"># remotes::install_github("jingwen517/sample-criteria")</span></span>
+<span><span class="co"># library(sample.criteria)</span></span></code></pre></div>
 </div>
+</div>
+<div class="section level2">
+<h2 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a>
+</h2>
 <div class="section level3">
-<h3 id="case-1-only-c-statistics-is-reported">Case 1: Only C statistics is reported<a class="anchor" aria-label="anchor" href="#case-1-only-c-statistics-is-reported"></a>
+<h3 id="case-study-tumor-type-prediction">Case Study: Tumor Type Prediction<a class="anchor" aria-label="anchor" href="#case-study-tumor-type-prediction"></a>
 </h3>
+<p>This package has two main functions: <strong>pmsamplesize()</strong>
+and <strong>approximate_R2()</strong>. We will mainly focus on the
+example in <span class="citation">Pate et al. (2023, 564)</span>.</p>
+<p>The very least information a user needs to provide is event outcomes
+or prevalance to further calculate the
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>R</mi><mrow><mi>C</mi><mi>S</mi><mo>,</mo><mi>a</mi><mi>d</mi><mi>j</mi><mo>,</mo><mi>k</mi><mo>,</mo><mi>r</mi></mrow><mn>2</mn></msubsup><annotation encoding="application/x-tex">R^2_{CS,adj,k,r}</annotation></semantics></math>
+required by sample criteron 1 and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="monospace">𝚖𝚊𝚡</mtext><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mi>R</mi><mrow><mi>C</mi><mi>S</mi><mo>,</mo><mi>a</mi><mi>p</mi><mi>p</mi></mrow><mn>2</mn></msubsup><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\texttt{max}(R^2_{CS,app})</annotation></semantics></math>
+required by criterion 2. <strong>Note</strong> that criterion 1 is
+sensitive to this and tends to return a higher predicted sample size if
+a rounded prevalance is given to the <code>p</code> argument in
+<code><a href="../reference/pmsamplesize.html">pmsamplesize()</a></code> function compared to just event outcomes.
+The following is a flowchart of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>R</mi><mrow><mi>C</mi><mi>S</mi><mo>,</mo><mi>a</mi><mi>d</mi><mi>j</mi><mo>,</mo><mi>k</mi><mo>,</mo><mi>r</mi></mrow><mn>2</mn></msubsup><annotation encoding="application/x-tex">R^2_{CS,adj,k,r}</annotation></semantics></math>
+derivation: <img src="r2_derivation.png" alt="img "></p>
+<div class="section level4">
+<h4 id="case-1-only-c-statistics-is-reported">Case 1: Only C statistics is reported<a class="anchor" aria-label="anchor" href="#case-1-only-c-statistics-is-reported"></a>
+</h4>
 <p>In clinical studies, Cox-Snell
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>R</mi><mn>2</mn></msup><annotation encoding="application/x-tex">R^2</annotation></semantics></math>
 often has the following issues: - The Cox-Snell R-squared is often
@@ -108,119 +147,124 @@ the case.</p>
 <p>We can then appropriate
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>R</mi><mrow><mi>C</mi><mi>S</mi></mrow><mn>2</mn></msubsup><annotation encoding="application/x-tex">R^2_{CS}</annotation></semantics></math>
 using the C statistics and event prevalence (outcome proportion). The
-steps are detailed in <a href="https://onlinelibrary.wiley.com/doi/epdf/10.1002/sim.8806" class="external-link">here</a>
-by Riley. We can execute the simulation with the following command:</p>
+steps are detailed in <a href="https://github.com/alexpate30/MRC-multi-outcome/blob/394a236a83df524074197d9dc194fdafe96aad9c/Project%208%20Multinomial%20Sample%20Size/code/p3.1%20worked%20example.R#L142" class="external-link">Github</a>.
+We can execute the simulation with the following command:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jingwen517/sample-criteria.git" class="external-link">sample.criteria</a></span><span class="op">)</span></span>
-<span><span class="co"># Noted here that k = 2 for binary outcomes</span></span>
-<span><span class="fu"><a href="../reference/approximate_R2.html">approximate_R2</a></span><span class="op">(</span>k <span class="op">=</span> <span class="fl">2</span>, auc <span class="op">=</span> <span class="fl">0.81</span>, prev <span class="op">=</span> <span class="fl">0.77</span><span class="op">)</span></span>
-<span><span class="co">#&gt; $R2.nagelkerke</span></span>
-<span><span class="co">#&gt; [1] 0.3231788</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $R2.coxsnell</span></span>
-<span><span class="co">#&gt; [1] 0.2132698</span></span></code></pre></div>
-<p>Here, the can be directly used for calculating sample criteria since
-it is gotten from another dataset. Assuming the new model aimed to
-consider up to 30 predictor parameters, applying the sample size
-criteria of Riley et al. Using pmsamplesize() then we should have a
-minimum sample size of 1129:</p>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/mapply.html" class="external-link">mapply</a></span><span class="op">(</span><span class="va">approximate_R2</span>, </span>
+<span>       k <span class="op">=</span> <span class="fl">5</span>, </span>
+<span>       auc <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.85</span>, <span class="fl">0.92</span>, <span class="fl">0.99</span>, <span class="fl">0.95</span>, <span class="fl">0.75</span>, <span class="fl">0.95</span>, <span class="fl">0.87</span>, <span class="fl">0.87</span>, <span class="fl">0.71</span>, <span class="fl">0.82</span><span class="op">)</span>, </span>
+<span>       prev <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.729</span>, <span class="fl">0.053</span>, <span class="fl">0.05</span>, <span class="fl">0.133</span>, <span class="fl">0.034</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;  [1] 0.29244451 0.15518314 0.26344018 0.35075416 0.02855554 0.49077301</span></span>
+<span><span class="co">#&gt;  [7] 0.10914308 0.10363603 0.06578732 0.05131871</span></span></code></pre></div>
+<p>Here, the
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>R</mi><mrow><mi>C</mi><mi>S</mi></mrow><mn>2</mn></msubsup><annotation encoding="application/x-tex">R^2_{CS}</annotation></semantics></math>
+can be directly used for calculating sample criteria since it is gotten
+from another dataset. <code>adjust = TRUE</code> argument in
+<code>pmsamplesize</code> allows a user to use <span class="math inline">$R^2_{CS,adj$</span> adjusted to amount of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>R</mi><mrow><mi>N</mi><mi>a</mi><mi>g</mi><mi>e</mi><mi>l</mi><mi>k</mi><mi>e</mi><mi>r</mi><mi>k</mi><mi>e</mi></mrow><mn>2</mn></msubsup><annotation encoding="application/x-tex">R^2_{Nagelkerke}</annotation></semantics></math>.
+Assuming the new model aimed to consider up to 17 predictor parameters,
+applying the sample size criteria of Riley et al. Using pmsamplesize()
+then we should have a minimum sample size of 13135:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1234</span><span class="op">)</span></span>
-<span><span class="va">scriteria</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/pmsamplesize.html">pmsamplesize</a></span><span class="op">(</span>Q <span class="op">=</span> <span class="fl">30</span>, k <span class="op">=</span> <span class="fl">2</span>, auc <span class="op">=</span> <span class="fl">0.81</span>, prev <span class="op">=</span> <span class="fl">0.77</span>, r2_nagelkerke <span class="op">=</span> <span class="fl">0.15</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning in pmsamplesize(Q = 30, k = 2, auc = 0.81, prev = 0.77, r2_nagelkerke =</span></span>
-<span><span class="co">#&gt; 0.15): Inadequate information to calculate sample size for criterion 2</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">101</span><span class="op">)</span></span>
+<span><span class="va">scriteria</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/pmsamplesize.html">pmsamplesize</a></span><span class="op">(</span>Q <span class="op">=</span> <span class="fl">17</span>, </span>
+<span>                          k <span class="op">=</span> <span class="fl">5</span>, </span>
+<span>                          p <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.729</span>, <span class="fl">0.053</span>, <span class="fl">0.05</span>, <span class="fl">0.133</span>, <span class="fl">0.034</span><span class="op">)</span>,</span>
+<span>                          auc <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.85</span>, <span class="fl">0.92</span>, <span class="fl">0.99</span>, <span class="fl">0.95</span>, <span class="fl">0.75</span>, <span class="fl">0.95</span>, <span class="fl">0.87</span>, <span class="fl">0.87</span>, <span class="fl">0.71</span>, <span class="fl">0.82</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">scriteria</span> </span>
 <span><span class="co">#&gt; NB: Assuming 0.05 acceptable difference in apparent &amp; adjusted R-squared</span></span>
 <span><span class="co">#&gt; NB: Assuming 0.05 margin of error in estimation of intercept</span></span>
-<span><span class="co">#&gt; NB: Events per Predictor Parameter assumes prevalance 0.77</span></span>
-<span><span class="co">#&gt;            sample_size shrinkage parameter CS_Rsq Max_Rsq Nag_Rsq   EPP</span></span>
-<span><span class="co">#&gt; Criteria 1        1130       0.9        30   0.21      NA    0.15 29.00</span></span>
-<span><span class="co">#&gt; Criteria 3         273       0.9        30   0.21      NA    0.15  7.01</span></span>
-<span><span class="co">#&gt; Final             1130       0.9        30   0.21      NA    0.15 29.00</span></span>
-<span><span class="co">#&gt; Minimum sample size required for new model development based on user inputs = 1130,</span></span>
-<span><span class="co">#&gt;  with 870 events (assuming an outcome prevalence = 0.77) and an EPP = 29</span></span></code></pre></div>
+<span><span class="co">#&gt;            sample_size shrinkage parameter    CS_Rsq   Max_Rsq Nag_Rsq</span></span>
+<span><span class="co">#&gt; Criteria 1       13135      0.90        17 0.1261382 0.8409213    0.15</span></span>
+<span><span class="co">#&gt; Criteria 2        1478      0.75        17 0.1261382 0.8409213    0.15</span></span>
+<span><span class="co">#&gt; Criteria 3         525      0.90        17 0.1261382 0.8409213    0.15</span></span>
+<span><span class="co">#&gt; Final            13135      0.90        17 0.1261382 0.8409213    0.15</span></span></code></pre></div>
 <p>Three criteria are reported in this example. The criterion targeting
-the difference between the apprarent and optimism adjusted
+the difference between the apparent and optimism adjusted
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>R</mi><mrow><mi>N</mi><mi>a</mi><mi>g</mi><mi>e</mi><mi>l</mi><mi>k</mi><mi>e</mi><mi>r</mi><mi>k</mi><mi>e</mi></mrow><mn>2</mn></msubsup><annotation encoding="application/x-tex">R^2_{Nagelkerke}</annotation></semantics></math>
 to be
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>δ</mi><mrow></mrow><mo>=</mo><mn>0.05</mn></mrow><annotation encoding="application/x-tex">\delta{}=0.05</annotation></semantics></math>
 has a larger example for modeling in the future.</p>
 </div>
-<div class="section level3">
-<h3 id="case-2-when-no-cox-snell-r2-is-reported">Case 2: When No Cox-Snell
+<div class="section level4">
+<h4 id="case-2-when-neither-cox-snell-r2-or-c-statistics-are-reported">Case 2: When Neither Cox-Snell
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>R</mi><mn>2</mn></msup><annotation encoding="application/x-tex">R^2</annotation></semantics></math>
-is reported<a class="anchor" aria-label="anchor" href="#case-2-when-no-cox-snell-r2-is-reported"></a>
-</h3>
-<p>Event prevalences are observed more than often. We could use this
-information to calculate the apparent Cox-Snell
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>R</mi><mn>2</mn></msup><annotation encoding="application/x-tex">R^2</annotation></semantics></math>
-using a log-likelihood of a null model:
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>l</mi><mi>n</mi><mi>L</mi><msub><mi>R</mi><mrow><mi>n</mi><mi>u</mi><mi>l</mi><mi>l</mi></mrow></msub><mo>=</mo><mi>E</mi><mi>l</mi><mi>n</mi><mfrac><mi>E</mi><mi>n</mi></mfrac><mo>+</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>n</mi><mo>−</mo><mi>E</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>l</mi><mi>n</mi><mrow><mn>1</mn><mo>−</mo><mfrac><mi>E</mi><mi>n</mi></mfrac></mrow></mrow><annotation encoding="application/x-tex">lnLR_{null}=Eln{\frac{E}{n}}+(n-E)ln{1-\frac{E}{n}}</annotation></semantics></math>
-where E is the number of outcome. Using the following command, the
-sample criteria could calculate as usual:</p>
+or C-statistics are reported<a class="anchor" aria-label="anchor" href="#case-2-when-neither-cox-snell-r2-or-c-statistics-are-reported"></a>
+</h4>
+<p><span class="citation">Pate et al. (2023, 563)</span> recommends
+derive
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>R</mi><mrow><mi>C</mi><mi>S</mi><mo>,</mo><mi>a</mi><mi>d</mi><mi>j</mi><mo>,</mo><mi>k</mi><mo>,</mo><mi>r</mi></mrow><mn>2</mn></msubsup><annotation encoding="application/x-tex">R^2_{CS,adj,k,r}</annotation></semantics></math>
+by the approach suggested by <span class="citation">Riley et al.
+(2020)</span>. (Referred as
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>φ</mi><mrow><mi>k</mi><mo>,</mo><mi>r</mi></mrow></msub><annotation encoding="application/x-tex">\varphi_{k,r}</annotation></semantics></math>
+approach in figure ) In the literature,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>φ</mi><mrow><mi>k</mi><mo>,</mo><mi>r</mi></mrow></msub><mo>=</mo><mfrac><msub><mi>E</mi><mi>k</mi></msub><mrow><msub><mi>E</mi><mi>k</mi></msub><mo>+</mo><msub><mi>E</mi><mi>r</mi></msub></mrow></mfrac></mrow><annotation encoding="application/x-tex">\varphi_{k,r}=\frac{E_k}{E_k+E_r}</annotation></semantics></math>
+is defined as outcome proportion in the category k relative to the
+reference category r. Then for each distinct logistic regression model
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="monospace">𝚖𝚊𝚡</mtext><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mi>R</mi><mrow><mi>C</mi><mi>S</mi><mo>,</mo><mi>a</mi><mi>p</mi><mi>p</mi><mo>,</mo><mi>k</mi><mo>,</mo><mi>r</mi></mrow><mn>2</mn></msubsup><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\texttt{max}(R^2_{CS,app,k,r})</annotation></semantics></math>
+can be calculated as:
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="monospace">𝚖𝚊𝚡</mtext><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mi>R</mi><mrow><mi>C</mi><mi>S</mi><mo>,</mo><mi>a</mi><mi>p</mi><mi>p</mi><mo>,</mo><mi>k</mi><mo>,</mo><mi>r</mi></mrow><mn>2</mn></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mn>1</mn><mo>−</mo><msubsup><mi>φ</mi><mrow><mi>k</mi><mo>,</mo><mi>r</mi></mrow><mrow><mo stretchy="false" form="prefix">(</mo><msub><mi>φ</mi><mrow><mi>k</mi><mo>,</mo><mi>r</mi></mrow></msub></mrow></msubsup><msup><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><msub><mi>φ</mi><mrow><mi>k</mi><mo>,</mo><mi>r</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mn>1</mn><mo>−</mo><msub><mi>φ</mi><mrow><mi>k</mi><mo>,</mo><mi>r</mi></mrow></msub></mrow></msup><msup><mo stretchy="false" form="postfix">)</mo><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">\texttt{max}(R^2_{CS,app,k,r})=1-\varphi_{k,r}^{(\varphi_{k,r}}(1-\varphi_{k,r})^{1-\varphi_{k,r}})^2</annotation></semantics></math>
+If a multinomial model had been published, then this information would
+be available for each distinct logistic regression model assuming the
+number of events in each category had been reported.
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>R</mi><mrow><mi>C</mi><mi>S</mi><mo>,</mo><mi>a</mi><mi>d</mi><mi>j</mi><mo>,</mo><mi>k</mi><mo>,</mo><mi>r</mi></mrow><mn>2</mn></msubsup><annotation encoding="application/x-tex">R^2_{CS,adj,k,r}</annotation></semantics></math>
+calculated in this approach tends to be smaller and it results to larger
+sample size. To remedy this issue, the recommendations are put forward
+in <span class="citation">Pate et al. (2023, 564)</span>.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/pmsamplesize.html">pmsamplesize</a></span><span class="op">(</span>Q <span class="op">=</span> <span class="fl">24</span>, p <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">138</span> <span class="op">-</span> <span class="fl">24</span>, <span class="fl">24</span><span class="op">)</span>, r2_nagelkerke <span class="op">=</span> <span class="fl">0.48</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">bcriteria</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/pmsamplesize.html">pmsamplesize</a></span><span class="op">(</span>Q <span class="op">=</span> <span class="fl">17</span>,</span>
+<span>                  k <span class="op">=</span> <span class="fl">5</span>,</span>
+<span>                  p <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2557</span>, <span class="fl">186</span>, <span class="fl">176</span>, <span class="fl">467</span>, <span class="fl">120</span><span class="op">)</span>,</span>
+<span>                  r2_nagelkerke <span class="op">=</span> <span class="fl">0.15</span>,</span>
+<span>                  shrinkage <span class="op">=</span> <span class="fl">0.9</span><span class="op">)</span></span>
+<span><span class="va">bcriteria</span></span>
 <span><span class="co">#&gt; NB: Assuming 0.05 acceptable difference in apparent &amp; adjusted R-squared</span></span>
 <span><span class="co">#&gt; NB: Assuming 0.05 margin of error in estimation of intercept</span></span>
-<span><span class="co">#&gt; NB: Events per Predictor Parameter assumes prevalance 0.174</span></span>
-<span><span class="co">#&gt;            sample_size shrinkage parameter CS_Rsq Max_Rsq Nag_Rsq  EPP</span></span>
-<span><span class="co">#&gt; Criteria 1         623     0.900        24  0.288     0.6    0.48 4.51</span></span>
-<span><span class="co">#&gt; Criteria 2         668     0.906        24  0.288     0.6    0.48 4.84</span></span>
-<span><span class="co">#&gt; Criteria 3         221     0.900        24  0.288     0.6    0.48 1.60</span></span>
-<span><span class="co">#&gt; Final              668     0.906        24  0.288     0.6    0.48 4.84</span></span>
-<span><span class="co">#&gt; Minimum sample size required for new model development based on user inputs = 668,</span></span>
-<span><span class="co">#&gt;  with 116 events (assuming an outcome prevalence = 0.174) and an EPP = 4.84</span></span></code></pre></div>
-<p>Here, the <em>p</em> argument must be outcome proportions, denoted as
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>p</mi><mi>k</mi></msub><annotation encoding="application/x-tex">p_{k}</annotation></semantics></math>.
-By defailt, the first element in the vector is the
+<span><span class="co">#&gt;            sample_size shrinkage parameter    CS_Rsq   Max_Rsq Nag_Rsq</span></span>
+<span><span class="co">#&gt; Criteria 1       15280      0.90        17 0.1261869 0.8412462    0.15</span></span>
+<span><span class="co">#&gt; Criteria 2        1477      0.75        17 0.1261869 0.8412462    0.15</span></span>
+<span><span class="co">#&gt; Criteria 3         524      0.90        17 0.1261869 0.8412462    0.15</span></span>
+<span><span class="co">#&gt; Final            15280      0.90        17 0.1261869 0.8412462    0.15</span></span></code></pre></div>
+<p>By default, the first element in the vector is the
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Y</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">Y=0</annotation></semantics></math>
-group (benign) group. We could use the helper function to the return
-outcome proportions by taking the number of events in different groups.
-Here, the result reported the minimum sample size should be 668 under
-criterion 2.</p>
+group (benign) group. <code>p</code> argument will be properly handled
+by the function, be it proportion outcomes or event outcomes.</p>
 </div>
-<div class="section level3">
-<h3 id="case-3-cohort-cox-snell-r2_cs_adjkr-approximation-with-c-statistics">Case 3: Cohort Cox-Snell
+<div class="section level4">
+<h4 id="case-3-cohort-cox-snell-r2_cs_adjkr-approximation-with-c-statistics">Case 3: Cohort Cox-Snell
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>R</mi><mrow><mi>C</mi><mi>S</mi><mi>_</mi><mi>a</mi><mi>d</mi><mi>j</mi><mo>,</mo><mi>k</mi><mo>,</mo><mi>r</mi></mrow><mn>2</mn></msubsup><annotation encoding="application/x-tex">R^2_{CS\_adj,k,r}</annotation></semantics></math>
 approximation with C statistics<a class="anchor" aria-label="anchor" href="#case-3-cohort-cox-snell-r2_cs_adjkr-approximation-with-c-statistics"></a>
-</h3>
+</h4>
 <p>To calculate the criterion 1 minimum sample size, we need the cohort
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>R</mi><mrow><mi>C</mi><mi>S</mi><mi>_</mi><mi>a</mi><mi>d</mi><mi>j</mi><mo>,</mo><mi>k</mi><mo>,</mo><mi>r</mi></mrow><mn>2</mn></msubsup><annotation encoding="application/x-tex">R^2_{CS\_adj,k,r}</annotation></semantics></math>
 information, which sometimes are not reported in studies. We can the
 approximate them using the simulation approach put forward by Riley et
 al. Estimates of the pairwise outcome proportions
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ϕ</mi><mrow><mi>k</mi><mo>,</mo><mi>r</mi></mrow></msub><annotation encoding="application/x-tex">\phi_{k,r}</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>φ</mi><mrow><mi>k</mi><mo>,</mo><mi>r</mi></mrow></msub><annotation encoding="application/x-tex">\varphi_{k,r}</annotation></semantics></math>
 of category k relative to the reference category r are also required to
 implement the simulation approach. One can supply the
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ϕ</mi><mrow><mi>k</mi><mo>,</mo><mi>r</mi></mrow></msub><annotation encoding="application/x-tex">\phi_{k,r}</annotation></semantics></math>
 value to argument , but it could also be left blank and the calculation
-will be done internally with a helper function . The Pate’s example in
-his work could be executed with the following demand:</p>
+will be done internally with argument <code>p</code>. The example in
+<span class="citation">Pate et al. (2023, 565)</span> could be executed
+with the following demand:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Note the prev argument is not default to NULL</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">101</span><span class="op">)</span></span>
-<span><span class="va">a</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/pmsamplesize.html">pmsamplesize</a></span><span class="op">(</span>Q <span class="op">=</span> <span class="fl">17</span>,</span>
-<span>             k <span class="op">=</span> <span class="fl">5</span>,</span>
-<span>             p <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.729</span>, <span class="fl">0.053</span>, <span class="fl">0.05</span>, <span class="fl">0.133</span>, <span class="fl">0.034</span><span class="op">)</span>,</span>
-<span>             r2_nagelkerke <span class="op">=</span> <span class="fl">0.15</span>,</span>
-<span>             shrinkage <span class="op">=</span> <span class="fl">0.9</span>,</span>
-<span>             auc <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.85</span>, <span class="fl">0.92</span>, <span class="fl">0.99</span>, <span class="fl">0.95</span>, <span class="fl">0.75</span>, <span class="fl">0.95</span>, <span class="fl">0.87</span>, <span class="fl">0.87</span>, <span class="fl">0.71</span>, <span class="fl">0.82</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Called from: pmsamplesize(Q = 17, k = 5, p = c(0.729, 0.053, 0.05, 0.133, </span></span>
-<span><span class="co">#&gt;     0.034), r2_nagelkerke = 0.15, shrinkage = 0.9, auc = c(0.85, </span></span>
-<span><span class="co">#&gt;     0.92, 0.99, 0.95, 0.75, 0.95, 0.87, 0.87, 0.71, 0.82))</span></span>
-<span><span class="co">#&gt; debug: crit2 &lt;- ceiling(((k - 1) * Q)/(shrinkage_crit2 - 1)/log(1 - </span></span>
-<span><span class="co">#&gt;     r2_cs_adj - sigma * r2_cs_app))</span></span>
-<span><span class="co">#&gt; debug: crit3 &lt;- ceiling(max(qchisq(0.05/k, 1, lower.tail = FALSE) * </span></span>
-<span><span class="co">#&gt;     pk * (1 - pk)/sigma^2))</span></span>
-<span><span class="co">#&gt; debug: res &lt;- data.frame(sample_size = c(crit1, crit2, crit3), shrinkage = c(shrinkage, </span></span>
-<span><span class="co">#&gt;     shrinkage_crit2, shrinkage), parameter = Q, CS_Rsq = r2_cs_adj, </span></span>
-<span><span class="co">#&gt;     Max_Rsq = r2_cs_app, Nag_Rsq = r2_nagelkerke)</span></span>
-<span><span class="co">#&gt; debug: res[4, ] &lt;- res[which.max(res$sample_size), ]</span></span>
-<span><span class="co">#&gt; debug: rownames(res) &lt;- c(paste0("Criteria ", 1:3), "Final")</span></span>
-<span><span class="co">#&gt; debug: x &lt;- list(final = res[4, ], criteria = res[complete.cases(res$sample_size), </span></span>
-<span><span class="co">#&gt;     ], sigma = sigma, margin_error = margin_error)</span></span>
-<span><span class="co">#&gt; debug: class(x) &lt;- c("pmsample_multi")</span></span>
-<span><span class="co">#&gt; debug: return(x)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">101</span><span class="op">)</span></span>
+<span><span class="va">acriteria</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/pmsamplesize.html">pmsamplesize</a></span><span class="op">(</span>Q <span class="op">=</span> <span class="fl">17</span>,</span>
+<span>                  k <span class="op">=</span> <span class="fl">5</span>,</span>
+<span>                  p <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2557</span>, <span class="fl">186</span>, <span class="fl">176</span>, <span class="fl">467</span>, <span class="fl">120</span><span class="op">)</span>,</span>
+<span>                  r2_nagelkerke <span class="op">=</span> <span class="fl">0.15</span>,</span>
+<span>                  shrinkage <span class="op">=</span> <span class="fl">0.9</span>,</span>
+<span>                  auc <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.85</span>, <span class="fl">0.92</span>, <span class="fl">0.99</span>, <span class="fl">0.95</span>, <span class="fl">0.75</span>, <span class="fl">0.95</span>, <span class="fl">0.87</span>, <span class="fl">0.87</span>, <span class="fl">0.71</span>, <span class="fl">0.82</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">acriteria</span></span>
+<span><span class="co">#&gt; NB: Assuming 0.05 acceptable difference in apparent &amp; adjusted R-squared</span></span>
+<span><span class="co">#&gt; NB: Assuming 0.05 margin of error in estimation of intercept</span></span>
+<span><span class="co">#&gt;            sample_size shrinkage parameter    CS_Rsq   Max_Rsq Nag_Rsq</span></span>
+<span><span class="co">#&gt; Criteria 1       13063      0.90        17 0.1261869 0.8412462    0.15</span></span>
+<span><span class="co">#&gt; Criteria 2        1477      0.75        17 0.1261869 0.8412462    0.15</span></span>
+<span><span class="co">#&gt; Criteria 3         524      0.90        17 0.1261869 0.8412462    0.15</span></span>
+<span><span class="co">#&gt; Final            13063      0.90        17 0.1261869 0.8412462    0.15</span></span></code></pre></div>
+</div>
 </div>
 </div>
 <div class="section level2">
@@ -229,6 +273,45 @@ his work could be executed with the following demand:</p>
 <p>Through the illustrations above, package can easily calculate
 pre-defined sample criteria for future modelling given what kind of
 information is reported in various studies.</p>
+</div>
+<div class="section level2">
+<h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+</h2>
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="ref-Ensor2018" class="csl-entry">
+Ensor, Joie. 2018. <span>“<span class="nocase">PMSAMPSIZE: Stata module
+to calculate the minimum sample size required for developing a
+multivariable prediction model</span>.”</span> Statistical Software
+Components, Boston College Department of Economics. <a href="https://ideas.repec.org/c/boc/bocode/s458569.html" class="external-link">https://ideas.repec.org/c/boc/bocode/s458569.html</a>.
+</div>
+<div id="ref-Pate2023-yh" class="csl-entry">
+Pate, Alexander, Richard D Riley, Gary S Collins, Maarten van Smeden,
+Ben Van Calster, Joie Ensor, and Glen P Martin. 2023. <span>“Minimum
+Sample Size for Developing a Multivariable Prediction Model Using
+Multinomial Logistic Regression.”</span> <em>Stat. Methods Med.
+Res.</em> 32 (3): 555–71.
+</div>
+<div id="ref-Rileym441" class="csl-entry">
+Riley, Richard D, Joie Ensor, Kym I E Snell, Frank E Harrell, Glen P
+Martin, Johannes B Reitsma, Karel G M Moons, Gary Collins, and Maarten
+van Smeden. 2020. <span>“Calculating the Sample Size Required for
+Developing a Clinical Prediction Model.”</span> <em>BMJ</em> 368. <a href="https://doi.org/10.1136/bmj.m441" class="external-link">https://doi.org/10.1136/bmj.m441</a>.
+</div>
+<div id="ref-Riley2019-rn" class="csl-entry">
+Riley, Richard D, Kym Ie Snell, Joie Ensor, Danielle L Burke, Frank E
+Harrell Jr, Karel Gm Moons, and Gary S Collins. 2019. <span>“Minimum
+Sample Size for Developing a Multivariable Prediction Model:
+<span>PART</span> <span>II</span> - Binary and Time-to-Event
+Outcomes.”</span> <em>Stat. Med.</em> 38 (7): 1276–96.
+</div>
+<div id="ref-Riley2021-qe" class="csl-entry">
+Riley, Richard D, Ben Van Calster, and Gary S Collins. 2021. <span>“A
+Note on Estimating the <span>Cox-Snell</span> <span>R2</span> from a
+Reported <span>C</span> Statistic (<span>AUROC</span>) to Inform Sample
+Size Calculations for Developing a Prediction Model with a Binary
+Outcome.”</span> <em>Stat. Med.</em> 40 (4): 859–64.
+</div>
+</div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
