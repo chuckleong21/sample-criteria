@@ -60,10 +60,6 @@ We will mainly focus on the example in @Pate2023-yh[p.564].
 
 The very least information a user needs to provide is event outcomes or prevalance to further calculate the $R^2_{CS,adj,k,r}$ required by sample criteron 1 and $\texttt{max}(R^2_{CS,app})$ required by criterion 2. **Note** that criterion 1 is sensitive to this and tends to return a higher predicted sample size if a rounded prevalance is given to the `p` argument in `pmsamplesize()` function compared to just event outcomes. The following is a flowchart of $R^2_{CS,adj,k,r}$ derivation: 
 
-```{r, figure, echo =FALSE, fig.cap="R2 derivation", out.width="80%", out.height="80%"}
-knitr::raw_html("https://raw.githubusercontent.com/chuckleong21/sample-criteria/main/vignettes/r2_derivation.png")
-```
-
 <img src="https://raw.githubusercontent.com/chuckleong21/sample-criteria/main/vignettes/r2_derivation.png" alt="R2 derivation">
 
 ### Case 1: Only C statistics is reported

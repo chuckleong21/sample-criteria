@@ -11,9 +11,6 @@ library(sample.criteria)
 # remotes::install_github("jingwen517/sample-criteria")
 # library(sample.criteria)
 
-## ----figure, echo =FALSE, fig.cap="R2 derivation", out.width="80%", out.height="80%"----
-knitr::raw_html("https://raw.githubusercontent.com/chuckleong21/sample-criteria/main/vignettes/r2_derivation.png")
-
 ## ----simulation---------------------------------------------------------------
 set.seed(101)
 mapply(approximate_R2, 
