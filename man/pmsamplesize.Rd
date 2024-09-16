@@ -89,6 +89,6 @@ set.seed(1234)
 pmsamplesize(Q = 30, k = 2, r2_nagelkerke = 0.15, auc = 0.81, prev = 0.77)
 }
 \references{
-\insertCite{pmsamplesize-multinomial}{sample.criteria}
-\insertCite{pmsamplesize-binary}{sample.criteria}
+\insertCite{Pate2023-yh}{sample.criteria}
+\insertCite{Riley2019-rn}{sample.criteria}
 }

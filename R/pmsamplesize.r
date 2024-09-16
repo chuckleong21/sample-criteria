@@ -47,8 +47,8 @@ print.pmsample_multi <- function(x, ...) { # nocov start
 #' If not supplied, they will be derived from \code{p}.
 #'
 #' @references
-#' \insertCite{pmsamplesize-multinomial}{sample.criteria}
-#' \insertCite{pmsamplesize-binary}{sample.criteria}
+#' \insertCite{Pate2023-yh}{sample.criteria}
+#' \insertCite{Riley2019-rn}{sample.criteria}
 #'
 #' @param Q An integer. The number of candidate predictors. See Details
 #' @param k An integer. The number of levels in response variable
@@ -93,7 +93,11 @@ pmsamplesize <- function(Q, k, p, adjust = FALSE,
       available_crit2 <- FALSE
     } else if(!is.null(auc) & !is.null(prev)) {
       available_crit2 <- FALSE
-      r2_cs_app <- round(approximate_R2(k = k, auc = auc, prev = prev)[["R2.coxsnell"]], 2)
+      if(k == 2) {
+        r2_cs_app <- round(approximate_R2(k = k, auc = auc, prev = prev)[["R2.coxsnell"]], 2)
+      } else {
+        r2_cs_app <- mapply(approximate_R2, k = k, auc = auc, prev = prev)
+      }
     }
   }
   stopifnot("k is not at least equal or greater than 2" = k >= 2)
@@ -130,7 +134,7 @@ pmsamplesize <- function(Q, k, p, adjust = FALSE,
     r2_cs_adj <- ifelse(adjust, r2_cs_adj, r2_cs_app)
 
     ### criterion 1: baseline on shrinkage = 0.9
-    crit1 <- ceiling(Q / ((shrinkage - 1) * log(1 - r2_cs_adj/shrinkage)))
+    crit1 <- ceiling(Q / ((shrinkage - 1) / log(1 - r2_cs_adj/shrinkage)))
     ### criterion 2: baseline on adjusted shrinkage
     ### by absolute difference in proportions of variance explained
     if(!exists("available_crit2")) {
@@ -193,42 +197,44 @@ pmsamplesize <- function(Q, k, p, adjust = FALSE,
       pk <- p / sum(p); pkr <- margin.table(combn(p, 2), 2) / sum(p)
     }
 
-    if(is.null(r2_cs_adj)) {
-      if(is.null(r2_cs_app)) {
-        if(is.null(prev)) {
-          prev <- pk[Reduce(c, sapply(seq_along(pk), function(i) seq_along(pk)[-seq_len(i)]))] / pkr
-        }
-
-        # throws an error if auc or prev is not the length of ncol(combn(p, 2))
-        if(length(auc) != ncol(combn(pk, 2))) {
-          stop(sprintf('"auc" expects length of %g, but got %g',
-                       ncol(combn(p, 2)), length(auc)))
-        }
-
-        if(length(prev) != ncol(combn(pk, 2))) {
-          stop(sprintf('"prev" expects length of %g, but got %g',
-                       ncol(combn(p, 2)), length(prev)))
-        }
-
-        r2_cs_adj_kr <- mapply(approximate_R2, k = k, auc = auc, prev = prev)
+    if(!is.null(r2_cs_adj)) {
+      r2_cs_adjkr <- r2_cs_adj
+    } else if(!is.null(r2_cs_app)) {
+      if(!adjust) {
+        r2_cs_adj_kr <- r2_cs_app
       } else {
-        if(length(r2_cs_app) != ncol(combn(p, 2))) {
-          stop(sprintf('"r2_cs_app" expects length of %g, got %g', ncol(combn(p, 2)), length(r2_cs_app)))
-        }
         r2_cs_adj_kr <- r2_nagelkerke * r2_cs_app
       }
-    } else {
-      if(length(r2_cs_adj) != ncol(combn(p, 2))) {
-        stop(sprintf('"r2_cs_adj" expects length of %g, got %g', ncol(combn(p, 2)), length(r2_cs_app)))
+    } else if(!is.null(auc)) {
+      # throws an error if auc or prev is not the length of ncol(combn(p, 2))
+      if(length(auc) != ncol(combn(pk, 2))) {
+        stop(sprintf('"auc" expects length of %g, but got %g',
+                     ncol(combn(p, 2)), length(auc)))
       }
-      r2_cs_adj_kr <- r2_cs_adj
+      if(is.null(prev)) {
+        prev <- pk[Reduce(c, sapply(seq_along(pk), function(i) seq_along(pk)[-seq_len(i)]))] / pkr
+      } else if(length(prev) != ncol(combn(pk, 2))) {
+        stop(sprintf('"prev" expects length of %g, but got %g',
+                     ncol(combn(p, 2)), length(prev)))
+      }
+      r2_cs_adj_kr <- mapply(approximate_R2, k = k, auc = auc, prev = prev)
+    } else {
+      if(is.null(prev)) {
+        prev <- pk[Reduce(c, sapply(seq_along(pk), function(i) seq_along(pk)[-seq_len(i)]))] / pkr
+      } else if(length(prev) != ncol(combn(pk, 2))) {
+        stop(sprintf('"prev" expects length of %g, but got %g',
+                     ncol(combn(p, 2)), length(prev)))
+      }
+      # if neither pseudo-R2 or (pairwise) C-statistics are available a priori
+      # estimates are typically larger than that from simulation
+      r2_cs_app <- 1-((prev^prev)*((1-prev)^(1-prev)))^2
+      r2_cs_adj_kr <- r2_nagelkerke * r2_cs_app
     }
 
     crit1 <- ceiling(max((Q / ((shrinkage - 1)*log(1-r2_cs_adj_kr/shrinkage))) / pkr))
 
     r2_cs_app <- 1 - prod(pk^pk)^2; r2_cs_adj <- r2_nagelkerke * r2_cs_app
     shrinkage_crit2 <- r2_cs_adj / (r2_cs_adj + sigma * r2_cs_app)
-    browser()
     crit2 <- ceiling(((k-1)*Q) / (shrinkage_crit2-1) / log(1-r2_cs_adj-sigma*r2_cs_app))
 
     crit3 <- ceiling(max(qchisq(0.05/k, 1, lower.tail = FALSE)*pk*(1-pk) / sigma^2))

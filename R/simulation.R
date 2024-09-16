@@ -12,11 +12,11 @@
 #' @param n An integer. Simulation sample size. Default to \emph{1e6}
 #'
 #' @return
-#' * For binary outcome, approximate_R2() bases on \insertCite{r2-approx}{sample.criteria}
+#' * For binary outcome, approximate_R2() bases on \insertCite{Riley2021-qe}{sample.criteria}
 #' using \code{rms} package. It returns a list containing the \eqn{R^2_{CS}} and \eqn{R^2_{Nagelkerke}}
 #'
 #' * While for multinomial models, A Bernoulli simulation is used, based on
-#' \insertCite{r2-approx}{sample.criteria}
+#' \insertCite{Pate2023-yh}{sample.criteria}
 #' @export
 #'
 #' @examples
