@@ -1,6 +1,6 @@
 Package: sample.criteria
 Title: Criteria-based minimum sample size for multinomial logistic models
-Version: 0.0.0.9562
+Version: 0.0.0.9624
 Authors@R: 
     person("Jingwen", "Sun", , "jingwen7841@gmail.com", role = c("aut", "cre"))
 Description: The package facilitate to derive minimum sample size for both binary and multinomial logistic models in clinic studies based on three criteria. 1) fixed shrinkage rate based 2) adjusted shrinkage rate by tolerate rate in models based and 3) Overall risk restrainted by margin error of distribution.
@@ -23,3 +23,6 @@ Imports:
 RdMacros: Rdpack
 VignetteBuilder: knitr
 URL: https://github.com/jingwen517/sample-criteria.git, https://chuckleong21.github.io/sample-criteria/
+Depends: 
+    R (>= 2.10)
+LazyData: true
