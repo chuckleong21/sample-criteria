@@ -24,10 +24,6 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup，echo=FALSE}
-library(sample.criteria)
-```
-
 # Background
 
 Clinical prediction models (CPMs) are often developed using logistic regression to predict binary health outcomes. However, they can also be developed using multinomial logistic regression for outcomes with multiple levels, such as cancer grade or Likert scales. Multinomial models have been effective in various clinical settings, and some argue that they should be used more often. It's important to ensure the sample size of the development dataset is adequate to minimize overfitting and provide precise predictions. @Pate2023-yh proposes to extend the existing sample criteria defined by @Rileym441.
@@ -48,6 +44,7 @@ You can install the `sample.criteria` package from Github using the following co
 
 ```{r, install}
 # remotes::install_github("jingwen517/sample-criteria")
+library(sample.criteria)
 ```
 
 # Usage
