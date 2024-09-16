@@ -1,0 +1,152 @@
+@ARTICLE{Riley2019-rn,
+  title     = "Minimum sample size for developing a multivariable prediction
+               model: {PART} {II} - binary and time-to-event outcomes",
+  author    = "Riley, Richard D and Snell, Kym Ie and Ensor, Joie and Burke,
+               Danielle L and Harrell, Jr, Frank E and Moons, Karel Gm and
+               Collins, Gary S",
+  abstract  = "When designing a study to develop a new prediction model with
+               binary or time-to-event outcomes, researchers should ensure
+               their sample size is adequate in terms of the number of
+               participants (n) and outcome events (E) relative to the number
+               of predictor parameters (p) considered for inclusion. We propose
+               that the minimum values of n and E (and subsequently the minimum
+               number of events per predictor parameter, EPP) should be
+               calculated to meet the following three criteria: (i) small
+               optimism in predictor effect estimates as defined by a global
+               shrinkage factor of $\geq$0.9, (ii) small absolute difference of
+               $\leq$ 0.05 in the model's apparent and adjusted Nagelkerke's R2
+               , and (iii) precise estimation of the overall risk in the
+               population. Criteria (i) and (ii) aim to reduce overfitting
+               conditional on a chosen p, and require prespecification of the
+               model's anticipated Cox-Snell R2 , which we show can be obtained
+               from previous studies. The values of n and E that meet all three
+               criteria provides the minimum sample size required for model
+               development. Upon application of our approach, a new diagnostic
+               model for Chagas disease requires an EPP of at least 4.8 and a
+               new prognostic model for recurrent venous thromboembolism
+               requires an EPP of at least 23. This reinforces why rules of
+               thumb (eg, 10 EPP) should be avoided. Researchers might
+               additionally ensure the sample size gives precise estimates of
+               key predictor effects; this is especially important when key
+               categorical predictors have few events in some categories, as
+               this may substantially increase the numbers required.",
+  journal   = "Stat. Med.",
+  publisher = "Wiley",
+  volume    =  38,
+  number    =  7,
+  pages     = "1276--1296",
+  month     =  mar,
+  year      =  2019,
+  keywords  = "binary and time-to-event outcomes; logistic and Cox regression;
+               multivariable prediction model; pseudo R-squared; sample size;
+               shrinkage",
+  copyright = "http://creativecommons.org/licenses/by-nc/4.0/",
+  language  = "en"
+}
+
+@ARTICLE{Pate2023-yh,
+  title    = "Minimum sample size for developing a multivariable prediction
+              model using multinomial logistic regression",
+  author   = "Pate, Alexander and Riley, Richard D and Collins, Gary S and van
+              Smeden, Maarten and Van Calster, Ben and Ensor, Joie and Martin,
+              Glen P",
+  abstract = "AIMS: Multinomial logistic regression models allow one to predict
+              the risk of a categorical outcome with > 2 categories. When
+              developing such a model, researchers should ensure the number of
+              participants (n) is appropriate relative to the number of events
+              (Ek) and the number of predictor parameters (pk) for each
+              category k. We propose three criteria to determine the minimum n
+              required in light of existing criteria developed for binary
+              outcomes. PROPOSED CRITERIA: The first criterion aims to minimise
+              the model overfitting. The second aims to minimise the difference
+              between the observed and adjusted R2 Nagelkerke. The third
+              criterion aims to ensure the overall risk is estimated precisely.
+              For criterion (i), we show the sample size must be based on the
+              anticipated Cox-snell R2 of distinct 'one-to-one' logistic
+              regression models corresponding to the sub-models of the
+              multinomial logistic regression, rather than on the overall
+              Cox-snell R2 of the multinomial logistic regression. EVALUATION
+              OF CRITERIA: We tested the performance of the proposed criteria
+              (i) through a simulation study and found that it resulted in the
+              desired level of overfitting. Criterion (ii) and (iii) were
+              natural extensions from previously proposed criteria for binary
+              outcomes and did not require evaluation through simulation.
+              SUMMARY: We illustrated how to implement the sample size criteria
+              through a worked example considering the development of a
+              multinomial risk prediction model for tumour type when presented
+              with an ovarian mass. Code is provided for the simulation and
+              worked example. We will embed our proposed criteria within the
+              pmsampsize R library and Stata modules.",
+  journal  = "Stat. Methods Med. Res.",
+  volume   =  32,
+  number   =  3,
+  pages    = "555--571",
+  month    =  mar,
+  year     =  2023,
+  keywords = "Clinical prediction models; multinomial logistic regression;
+              sample size; shrinkage",
+  language = "en"
+}
+
+@ARTICLE{Riley2021-qe,
+  title     = "A note on estimating the {Cox-Snell} {R2} from a reported {C}
+               statistic ({AUROC}) to inform sample size calculations for
+               developing a prediction model with a binary outcome",
+  author    = "Riley, Richard D and Van Calster, Ben and Collins, Gary S",
+  abstract  = "In 2019 we published a pair of articles in Statistics in
+               Medicine that describe how to calculate the minimum sample size
+               for developing a multivariable prediction model with a
+               continuous outcome, or with a binary or time-to-event outcome.
+               As for any sample size calculation, the approach requires the
+               user to specify anticipated values for key parameters. In
+               particular, for a prediction model with a binary outcome, the
+               outcome proportion and a conservative estimate for the overall
+               fit of the developed model as measured by the Cox-Snell R2
+               (proportion of variance explained) must be specified. This
+               proposal raises the question of how to identify a plausible
+               value for R2 in advance of model development. Our articles
+               suggest researchers should identify R2 from closely related
+               models already published in their field. In this letter, we
+               present details on how to derive R2 using the reported C
+               statistic (AUROC) for such existing prediction models with a
+               binary outcome. The C statistic is commonly reported, and so our
+               approach allows researchers to obtain R2 for subsequent sample
+               size calculations for new models. Stata and R code is provided,
+               and a small simulation study.",
+  journal   = "Stat. Med.",
+  publisher = "Wiley",
+  volume    =  40,
+  number    =  4,
+  pages     = "859--864",
+  month     =  feb,
+  year      =  2021,
+  keywords  = "C statistic (AUROC); R squared; clinical prediction model;
+               sample size",
+  copyright = "http://creativecommons.org/licenses/by/4.0/",
+  language  = "en"
+}
+
+@article {Rileym441,
+	author = {Riley, Richard D and Ensor, Joie and Snell, Kym I E and Harrell, Frank E and Martin, Glen P and Reitsma, Johannes B and Moons, Karel G M and Collins, Gary and van Smeden, Maarten},
+	title = {Calculating the sample size required for developing a clinical prediction model},
+	volume = {368},
+	elocation-id = {m441},
+	year = {2020},
+	doi = {10.1136/bmj.m441},
+	publisher = {BMJ Publishing Group Ltd},
+	URL = {https://www.bmj.com/content/368/bmj.m441},
+	eprint = {https://www.bmj.com/content/368/bmj.m441.full.pdf},
+	journal = {BMJ}
+}
+
+@Misc{Ensor2018,
+  author={Joie Ensor},
+  title={{PMSAMPSIZE: Stata module to calculate the minimum sample size required for developing a multivariable prediction model}},
+  year=2018,
+  month=Dec,
+  howpublished={Statistical Software Components, Boston College Department of Economics},
+  abstract={pmsampsize computes the minimum sample size required for the development of a new multivariable prediction model using the criteria proposed by Riley et al. 2018. pmsampsize can be used to calculate the minimum sample size for the development of models with continuous, binary or survival (time-to-event) outcomes. Riley et al. lay out a series of criteria the sample size should meet. These aim to minimise the overfitting and to ensure precise estimation of key parameters in the prediction model. For continuous outcomes, there are four criteria: i) small overfitting defined by an expected shrinkage of predictor effects by 10\% or less, ii) small absolute difference of 0.05 in the model's apparent and adjusted R-squared value, iii) precise estimation of the residual standard deviation, and iv) precise estimation of the average outcome value. The sample size calculation requires the user to pre-specify (e.g. based on previous evidence) the anticipated R-squared of the model, and the average outcome value and standard deviation of outcome values in the population of interest. For binary or survival (time-to-event) outcomes, there are three criteria: i) small overfitting defined by an expected shrinkage of predictor effects by 10\% or less, ii) small absolute difference of 0.05 in the model's apparent and adjusted Nagelkerke's R-squared value, and iii) precise estimation (within +/- 0.05) of the average outcome risk in the population for a key timepoint of interest for prediction.},
+  keywords={sample size; power; overfitting; Stata},
+  doi={},
+  url={https://ideas.repec.org/c/boc/bocode/s458569.html},
+}
