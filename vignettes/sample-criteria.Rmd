@@ -24,7 +24,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
+```{r setup， echo=FALSE}
 library(sample.criteria)
 ```
 
@@ -48,7 +48,6 @@ You can install the `sample.criteria` package from Github using the following co
 
 ```{r, install}
 # remotes::install_github("jingwen517/sample-criteria")
-# library(sample.criteria)
 ```
 
 # Usage
